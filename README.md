@@ -1,6 +1,6 @@
 # IRProject16
 
-This a maven project. <br />
+This is a maven project. <br />
 The easiest way to try it out is by using Eclipse and follow the wizard (```Import -> Existing Maven Project...```).
 
 ### Resources needed
@@ -17,4 +17,4 @@ To make it work, some resources are needed:
 
 These files must be put in the ```src\main\resources``` directory and are obviously git-ignored.
 
-The **stopwords** file, instead, is already included (in the same dir). You can modify it as you wish.
+The file containing **stopwords**, instead, is already included (in the same dir). You can modify it as you wish.
