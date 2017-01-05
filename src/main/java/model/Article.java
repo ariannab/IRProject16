@@ -1,5 +1,8 @@
 package model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Article {
 	String author;
 	String title;
@@ -7,6 +10,7 @@ public class Article {
 	String url;
 	String urlToImage;
 	String publishedAt;
+	Set<String> tags;
 	
 	public Article(String author, String title, String description, String url, String urlToImage, String publishedAt) {
 		super();
@@ -31,7 +35,11 @@ public class Article {
 	public String getDescription() {
 		return description;
 	}
-	
-	
+
+	public Set<String> getTags() {
+		if(tags == null)
+			tags = new HashSet<String>();
+		return tags;
+	}
 	
 }
