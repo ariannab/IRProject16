@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -34,8 +33,10 @@ public class BootNewsAPI {
 	
 	public static void main(String[] args) throws IOException {		
 		Set<String> enSourcesIDs = getSourcesIDs();
+		int i = 0;
 		for(String id : enSourcesIDs){
-			getAllArticlesFromSource(id);
+			i++;
+			getAllArticlesFromSource(id, i);
 		}
 	}
 
@@ -70,10 +71,10 @@ public class BootNewsAPI {
 		return resp;
 	}
 
-	private static void getAllArticlesFromSource(String sourceID) throws MalformedURLException, IOException, ProtocolException {
+	private static void getAllArticlesFromSource(String sourceID, int j) throws MalformedURLException, IOException, ProtocolException {
 		loadAPIKey();
 		
-		System.out.println("\n\n-------------- Source: "+sourceID+" --------------------");
+		System.out.println("\n\n--------------------- Source "+j+": "+sourceID+" -------------------------");
 		URL obj = new URL("https://newsapi.org/v1/articles?source="+sourceID+"&apiKey="+YOUR_APIKEY);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
@@ -94,16 +95,17 @@ public class BootNewsAPI {
 			for(Article a : articles){
 				try {
 					i++;
-					System.out.println("\n\nArticle #"+i);
+					System.out.println("\nArticle #"+i);
 					String title = a.getTitle();
 					if(title!=null)
-						tokenize(title);
+						a.getTags().addAll(tokenize(title));
 					String desc = a.getDescription();
 					if(desc!=null)
-						tokenize(desc);
+						a.getTags().addAll(tokenize(desc));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				System.out.println(a.getTags().toString());
 			}				
 		} else {
 			System.out.println("GET request not worked");
@@ -137,17 +139,20 @@ public class BootNewsAPI {
 		return response;
 	}
 	
-	private static void tokenize(String text) throws IOException {
+	private static Set<String> tokenize(String text) throws IOException {
 		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildNewsAnalyzer();
-		TokenStream stream = analyzer.tokenStream("field", new StringReader(text));
+		TokenStream stream = analyzer.tokenStream("field", text);
 
 		CharTermAttribute termAtt = stream.addAttribute(CharTermAttribute.class);
+		Set<String> tags = new HashSet<String>();
 		try {
 			stream.reset();
 			while (stream.incrementToken()) {
-				System.out.println(termAtt.toString());
+				//System.out.println(termAtt.toString());
+				tags.add(termAtt.toString());
 			}
 			stream.end();
+			return tags;
 		} finally {
 			stream.close();
 			analyzer.close();
