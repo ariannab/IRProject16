@@ -15,7 +15,7 @@ public class CustomAnalyzerFactory {
 				.addTokenFilter("stop", "words",
 						"mysql_stopwords.txt", "format",
 						"wordset")
-				.addTokenFilter("englishminimalstem")
+				.addTokenFilter("porterstem")
 				.build();
 		return analyzer;
 	}
@@ -26,7 +26,7 @@ public class CustomAnalyzerFactory {
 				.addTokenFilter("stop", "words",
 						"mysql_stopwords.txt", "format",
 						"wordset")
-				.addTokenFilter("englishminimalstem")
+				.addTokenFilter("porterstem")
 				.build();
 		return analyzer;
 	}
