@@ -39,6 +39,7 @@ public class BootTwitter4j {
 		cb.setDebugEnabled(true).setOAuthConsumerKey(YOUR_KEY).setOAuthConsumerSecret(YOUR_SECRET)
 				.setOAuthAccessToken(YOUR_TOKEN).setOAuthAccessTokenSecret(YOUR_TOKENSECRET);
 
+		
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
 
@@ -59,8 +60,10 @@ public class BootTwitter4j {
 			e.printStackTrace();
 		}
 
-		List<Long> friends = getFollowersList(twitter, userName);
-		friends.retainAll(getFollowingList(twitter, userName));
+		List<Long> friends = getFollowingList(twitter, userName);
+		friends.retainAll(getFollowersList(twitter, userName));
+		System.out.println("User "+userName+" has "+friends.size()+" friends in total.");
+		System.out.println("\n...Now retrieving tweets, please wait...");
 		int i = 0;
 		for (Long friend : friends) {
 			timeline = "";
@@ -71,9 +74,9 @@ public class BootTwitter4j {
 			if (timeline != "") {
 				try {
 					Set<String> fTweets = tokenize(timeline, analyzer);
-					for (String t : fTweets) {
-						System.out.println(t);
-					}
+//					for (String t : fTweets) {
+//						System.out.println(t);
+//					}
 					user1.getfTweets().addAll(fTweets);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -81,13 +84,21 @@ public class BootTwitter4j {
 			}
 
 		}
-		System.out.println("------------------ MY TWEETS ---------------");
-		for (String t : user1.getTweets())
-			System.out.println(t);
+		user1.adjustProfile();
+		
+		i=0;
+		System.out.println("\n----------------------------------- USER'S TWEETS -------------------------------------");
+		for (String t : user1.getTweets()){
+			i++;
+			System.out.println("#"+i+" "+t);
+		}
 
-		System.out.println("\n\n------------------ FRIENDS' TWEETS ---------------");
-		for (String t : user1.getfTweets())
-			System.out.println(t);
+		i=0;
+		System.out.println("\n\n--------------------------------- FRIENDS' TWEETS ------------------------------");
+		for (String t : user1.getfTweets()){
+			i++;
+			System.out.println("#"+i+" "+t);
+		}
 		analyzer.close();
 
 	}

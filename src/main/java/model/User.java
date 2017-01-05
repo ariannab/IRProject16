@@ -23,5 +23,10 @@ public class User {
 		return fTweets;
 	}
 	
-	
+	public void adjustProfile(){
+		//it is useless to retain duplicated tags,
+		//we eliminate the intersection by giving priority
+		//to User's own tweets
+		this.fTweets.removeAll(tweets);
+	}
 }
