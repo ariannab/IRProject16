@@ -16,7 +16,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
-import utils.bootUtils;
+import utils.TwitterBootUtils;
 
 public class BootTwitter4j {
 
@@ -27,7 +27,7 @@ public class BootTwitter4j {
 	static String userName;
 
 	public static void main(String[] args) throws TwitterException, InterruptedException, IOException {
-		List<String> list = bootUtils.loadKeys();
+		List<String> list = TwitterBootUtils.loadKeys();
 		YOUR_KEY = list.get(0);
 		YOUR_SECRET = list.get(1);
 		YOUR_TOKEN = list.get(2);
@@ -40,7 +40,7 @@ public class BootTwitter4j {
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
 
-		userName = bootUtils.loadUsernames();
+		userName = TwitterBootUtils.loadUsernames();
 		User user1 = new User(userName);
 
 		// System.out.println("Friends of " + userName + " are in total " +
@@ -48,7 +48,7 @@ public class BootTwitter4j {
 		// System.out.println("\nAnd his timeline is...\n");
 		// printTimeline(twitter, userName);
 
-		String timeline = bootUtils.getStringTimeline(twitter, userName);
+		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName);
 
 		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 		try {
@@ -57,12 +57,12 @@ public class BootTwitter4j {
 			e.printStackTrace();
 		}
 
-		List<Long> friends = bootUtils.getFollowingList(twitter, userName);
-		friends.retainAll(bootUtils.getFollowersList(twitter, userName));
+		List<Long> friends = TwitterBootUtils.getFollowingList(twitter, userName);
+		friends.retainAll(TwitterBootUtils.getFollowersList(twitter, userName));
 
 		System.out.println("User " + userName + " has " + friends.size() + " friends in total.");
 		System.out.println("\n...Now retrieving tweets, please wait...");
-		List<String> friendsTimeline = bootUtils.getFriendsTimeline(twitter, friends);
+		List<String> friendsTimeline = TwitterBootUtils.getFriendsTimeline(twitter, friends);
 		int i = 0;
 		for (String ft : friendsTimeline) {
 			Set<String> fTweets = tokenize(ft, analyzer);
