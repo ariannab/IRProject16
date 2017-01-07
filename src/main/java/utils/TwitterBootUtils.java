@@ -12,7 +12,7 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
-public class bootUtils {
+public class TwitterBootUtils {
 	public static List<String> loadKeys() throws FileNotFoundException {
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		File file = new File(classloader.getResource("tweetKey.txt").getFile());
@@ -126,7 +126,7 @@ public class bootUtils {
 		List<String> friendsTimeline = new ArrayList<String>();
 		for (Long friend : friends) {
 			timeline = "";
-			timeline = bootUtils.getStringTimeline(twitter, twitter.showUser(friend).getScreenName());
+			timeline = TwitterBootUtils.getStringTimeline(twitter, twitter.showUser(friend).getScreenName());
 			if (timeline != "") {
 				friendsTimeline.add(timeline);
 			}
