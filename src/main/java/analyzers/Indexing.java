@@ -6,12 +6,15 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
@@ -21,7 +24,6 @@ import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-
 import model.Article;
 import model.RespArticles;
 import twitter4j.Twitter;
@@ -37,20 +39,29 @@ public class Indexing {
 	private static String YOUR_SECRET;
 	private static String YOUR_TOKEN;
 	private static String YOUR_TOKENSECRET;
+	private static CustomAnalyzer analyzer;
 
-	public static Document userIndexing(String username, String timeline, List<String> friendsTimeline) throws IOException {
+	public static Document userDoc(String username, String timeline, List<String> friendsTimeline) throws IOException {
 		Field userNameField = new StringField("username", username, Field.Store.YES);
-
+		
 		Document profile = new Document();
 		profile.add(userNameField);
-		profile.add(new TextField("utags", timeline, Field.Store.YES));
-		profile.add(new TextField("ftags", friendsTimeline.toString(), Field.Store.YES));
+		
+		FieldType myFieldType = new FieldType(TextField.TYPE_STORED);
+		myFieldType.setStoreTermVectors(true);		
+		Field utags = new Field("utags", timeline, myFieldType);		
+//		TextField utags = new TextField("utags", timeline, Field.Store.YES);
+		profile.add(utags);
+		
+//		TextField ftags = new TextField("ftags", friendsTimeline.toString(), Field.Store.YES);		
+		Field ftags = new Field("ftags", friendsTimeline.toString(), myFieldType);
+		profile.add(ftags);
 		
 		return profile;
 
 	}
 	
-	public static Document articleIndexing(String title, String description) throws IOException{		
+	public static Document articleDoc(String title, String description) throws IOException{		
 		Field titleField = new StringField("title", title, Field.Store.YES);
 		Document article = new Document();
 		article.add(titleField);
@@ -61,6 +72,30 @@ public class Indexing {
 	}
 	
 	public static void main(String args[]) throws TwitterException, IOException{
+		analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
+		
+		System.out.println("\nBuilding news index...");
+		Path artIndex = buildNewsIndex();
+//		Path artIndex = Paths.get("./indexes/article_index");
+		
+		System.out.println("\nBuilding user index...");
+		Path userIndex = buildUserIndex();	
+//		Path userIndex = Paths.get("./indexes/profile_index");
+		
+		System.out.println("\n\nNow querying!");
+		Querying.makeQuery(userIndex, artIndex, analyzer);
+	}
+	
+	private static Path buildUserIndex() throws IOException, TwitterException {
+		Path userIndex = new File("./indexes/profile_index").toPath();
+		Directory dir = FSDirectory.open(userIndex);
+
+		IndexWriterConfig config = new IndexWriterConfig(analyzer);
+		Similarity similarity = new BM25Similarity(); // Indexing with BM25
+		config.setSimilarity(similarity);
+		config.setOpenMode(OpenMode.CREATE);
+		
+		IndexWriter iwriter2 = new IndexWriter(dir, config);
 		
 		//retrieving and indexing one user
 		List<String> list = TwitterBootUtils.loadKeys();
@@ -75,21 +110,8 @@ public class Indexing {
 
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
-
-		
-
-		Directory dir = FSDirectory.open(new File("./my_index").toPath());
-		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
-		IndexWriterConfig config = new IndexWriterConfig(analyzer);
-		Similarity similarity = new BM25Similarity(); // Indexing with BM25
-		config.setSimilarity(similarity);
-		config.setOpenMode(OpenMode.CREATE);
-		IndexWriter iwriter = new IndexWriter(dir, config);
-
-		
-
-		System.out.println("Now building user index...");
 		String userName = TwitterBootUtils.loadUsernames();
+		System.out.println("User is: "+userName);
 		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName);
 		
 		List<Long> friends = TwitterBootUtils.getFollowingList(twitter, userName);
@@ -97,11 +119,24 @@ public class Indexing {
 		List<String> friendsTimeline = TwitterBootUtils.getFriendsTimeline(twitter, friends);
 
 
-		Document profile = userIndexing(userName, timeline, friendsTimeline);
-		iwriter.addDocument(profile);
+		Document profile = userDoc(userName, timeline, friendsTimeline);
+		iwriter2.addDocument(profile);
+		iwriter2.close();
 		
+		return userIndex;
+		
+	}
 
-		System.out.println("\nNow building news index...");
+	private static Path buildNewsIndex() throws IOException {
+		Path artIndex = new File("./indexes/article_index").toPath();
+		Directory dir = FSDirectory.open(artIndex);
+		IndexWriterConfig config = new IndexWriterConfig(analyzer);
+		Similarity similarity = new BM25Similarity(); // Indexing with BM25
+		config.setSimilarity(similarity);
+		config.setOpenMode(OpenMode.CREATE);
+		
+		IndexWriter iwriter1 = new IndexWriter(dir, config);
+		
 		//retrieving and indexing one article
 		Set<String> enSourcesIDs = NewsBootUtils.getSourcesIDs();
 		int i = 0;
@@ -110,23 +145,26 @@ public class Indexing {
 			i++;
 			articles = getAllArticlesFromSource(id, i);
 			for(Article a:articles){
-				Document article = articleIndexing(a.getTitle(), a.getDescription());	
-				iwriter.addDocument(article);
+				Document article = articleDoc(a.getTitle(), a.getDescription());	
+				iwriter1.addDocument(article);
 			}
 		}
-
-		iwriter.close();
+		iwriter1.close();	
+		
+		return artIndex;
+		
 	}
-	
+
+
 	private static List<Article> getAllArticlesFromSource(String sourceID, int j) throws MalformedURLException, IOException, ProtocolException {
 		String YOUR_APIKEY = NewsBootUtils.loadAPIKey();
 		
-		System.out.println("\n\n--------------------- Source "+j+": "+sourceID+" -------------------------");
+//		System.out.println("\n\n--------------------- Source "+j+": "+sourceID+" -------------------------");
 		URL obj = new URL("https://newsapi.org/v1/articles?source="+sourceID+"&apiKey="+YOUR_APIKEY);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
 		int responseCode = con.getResponseCode();
-		System.out.println("GET Response Code :: " + responseCode);
+//		System.out.println("GET Response Code :: " + responseCode);
 		
 		if (responseCode == HttpURLConnection.HTTP_OK) { 
 			// success
@@ -141,5 +179,4 @@ public class Indexing {
 		}
 		return null;
 	}
-	
 }
