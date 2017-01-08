@@ -13,7 +13,7 @@ public class CustomAnalyzerFactory {
 						urlRegex, "replacement", "")
 				.withTokenizer("lowercase").addTokenFilter("length", "min", "3", "max", "100")
 				.addTokenFilter("stop", "words",
-						"mysql_stopwords.txt", "format",
+						"long_stopwords.txt", "format",
 						"wordset")
 				.addTokenFilter("porterstem")
 				.build();
