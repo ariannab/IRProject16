@@ -23,6 +23,7 @@ all
 almost
 alone
 along
+alot
 already
 also
 although
@@ -263,6 +264,7 @@ km
 know
 known
 knows
+knew
 l
 largely
 last
@@ -284,6 +286,8 @@ little
 look
 looking
 looks
+lot
+lots
 ltd
 m
 made
