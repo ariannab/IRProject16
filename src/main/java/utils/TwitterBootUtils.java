@@ -42,9 +42,8 @@ public class TwitterBootUtils {
 	}
 	
 	public static String getStringTimeline(Twitter twitter, String userName) throws TwitterException {
-		Paging paging = new Paging(1, 100);
 		try {
-			List<Status> statuses = twitter.getUserTimeline(userName, paging);
+			List<Status> statuses = twitter.getUserTimeline(userName, new Paging());
 			String timeline = "";
 			for (Status status : statuses) {
 				timeline += status.getText() + " ";

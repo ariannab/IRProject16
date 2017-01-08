@@ -71,7 +71,7 @@ public class BootNewsAPI {
 	}
 	
 	private static Set<String> tokenize(String text) throws IOException {
-		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildNewsAnalyzer();
+		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 		TokenStream stream = analyzer.tokenStream("field", text);
 
 		CharTermAttribute termAtt = stream.addAttribute(CharTermAttribute.class);

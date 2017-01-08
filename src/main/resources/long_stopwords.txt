@@ -110,6 +110,8 @@ could
 couldnt
 d
 date
+day
+daily
 did
 didn't
 different
@@ -185,6 +187,7 @@ gone
 good
 got
 gotten
+great
 h
 had
 happens
@@ -239,6 +242,8 @@ into
 invention
 inward
 is
+isn
+isnt
 isn't
 it
 itd
@@ -551,6 +556,9 @@ throughout
 thru
 thus
 til
+time
+times
+timely
 tip
 to
 together

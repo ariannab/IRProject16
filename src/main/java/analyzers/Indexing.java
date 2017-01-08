@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +38,6 @@ public class Indexing {
 	private static String YOUR_SECRET;
 	private static String YOUR_TOKEN;
 	private static String YOUR_TOKENSECRET;
-	private static CustomAnalyzer analyzer;
 
 	public static Document userDoc(String username, String timeline, List<String> friendsTimeline) throws IOException {
 		Field userNameField = new StringField("username", username, Field.Store.YES);
@@ -71,9 +69,7 @@ public class Indexing {
 		
 	}
 	
-	public static void main(String args[]) throws TwitterException, IOException{
-		analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
-		
+	public static void main(String args[]) throws TwitterException, IOException{		
 		System.out.println("\nBuilding news index...");
 		Path artIndex = buildNewsIndex();
 //		Path artIndex = Paths.get("./indexes/article_index");
@@ -83,13 +79,17 @@ public class Indexing {
 //		Path userIndex = Paths.get("./indexes/profile_index");
 		
 		System.out.println("\n\nNow querying!");
-		Querying.makeQuery(userIndex, artIndex, analyzer);
+
+		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
+		Querying.makeQuery(userIndex, artIndex, analyzer);		
+		analyzer.close();
 	}
 	
 	private static Path buildUserIndex() throws IOException, TwitterException {
 		Path userIndex = new File("./indexes/profile_index").toPath();
 		Directory dir = FSDirectory.open(userIndex);
 
+		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		Similarity similarity = new BM25Similarity(); // Indexing with BM25
 		config.setSimilarity(similarity);
@@ -122,6 +122,7 @@ public class Indexing {
 		Document profile = userDoc(userName, timeline, friendsTimeline);
 		iwriter2.addDocument(profile);
 		iwriter2.close();
+		analyzer.close();
 		
 		return userIndex;
 		
@@ -130,6 +131,7 @@ public class Indexing {
 	private static Path buildNewsIndex() throws IOException {
 		Path artIndex = new File("./indexes/article_index").toPath();
 		Directory dir = FSDirectory.open(artIndex);
+		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		Similarity similarity = new BM25Similarity(); // Indexing with BM25
 		config.setSimilarity(similarity);
@@ -149,7 +151,8 @@ public class Indexing {
 				iwriter1.addDocument(article);
 			}
 		}
-		iwriter1.close();	
+		iwriter1.close();
+		analyzer.close();
 		
 		return artIndex;
 		
