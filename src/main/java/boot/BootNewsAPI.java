@@ -45,7 +45,7 @@ public class BootNewsAPI {
 			String prettyJsonString = NewsBootUtils.formatJson(response.toString());
 //			System.out.println(prettyJsonString);
 			RespArticles resp = NewsBootUtils.buildRespPOJO(prettyJsonString);
-			List<Article> articles = resp.getArticles();
+			Set<Article> articles = resp.getArticles();
 //			for (Article a : articles)
 //				System.out.println(a);
 			

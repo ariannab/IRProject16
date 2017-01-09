@@ -51,10 +51,13 @@ public class Querying {
 			Document art = artSearcher1.doc(resultList1[i].doc);
 			float score = resultList1[i].score;
 			String atitle = "";
-			if (art.getField("title") != null) {
+			String asource = "";
+			if (art.getField("title") != null) 
 				atitle = art.getField("title").stringValue();
-			}
-			System.out.println("title: " + atitle + " -- Score: " + score);
+
+			if (art.getField("source") != null) 
+				asource = art.getField("source").stringValue();
+			System.out.println("	title: <" + atitle + "> source: <"+asource+"> *** Score: " + score);
 		}
 
 		

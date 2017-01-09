@@ -1,13 +1,13 @@
 package model;
-import java.util.List;
+import java.util.Set;
 
 public class RespArticles {
 	String status;
 	String source;
 	String sortBy;
-	List<Article> articles;
+	Set<Article> articles;
 	
-	public RespArticles(String status, String source, String sortBy, List<Article> articles) {
+	public RespArticles(String status, String source, String sortBy, Set<Article> articles) {
 		super();
 		this.status = status;
 		this.source = source;
@@ -15,7 +15,7 @@ public class RespArticles {
 		this.articles = articles;
 	}
 
-	public List<Article> getArticles() {
+	public Set<Article> getArticles() {
 		return articles;
 	}
 	

@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
@@ -59,10 +60,12 @@ public class Indexing {
 
 	}
 	
-	public static Document articleDoc(String title, String description) throws IOException{		
-		Field titleField = new StringField("title", title, Field.Store.YES);
+	public static Document articleDoc(String title, String description, String sourceID) throws IOException{		
+		Field titleField = new StringField("title", title, Field.Store.YES);	
+		Field sourceField = new StringField("source", sourceID, Field.Store.YES);
 		Document article = new Document();
 		article.add(titleField);
+		article.add(sourceField);
 		article.add(new TextField("atags", title+" "+description, Field.Store.YES));
 		
 		return article;
@@ -142,12 +145,12 @@ public class Indexing {
 		//retrieving and indexing one article
 		Set<String> enSourcesIDs = NewsBootUtils.getSourcesIDs();
 		int i = 0;
-		List<Article> articles = null;
+		Set<Article> articles = null;
 		for(String id : enSourcesIDs){
 			i++;
 			articles = getAllArticlesFromSource(id, i);
-			for(Article a:articles){
-				Document article = articleDoc(a.getTitle(), a.getDescription());	
+			for(Article a : articles){
+				Document article = articleDoc(a.getTitle(), a.getDescription(), id);	
 				iwriter1.addDocument(article);
 			}
 		}
@@ -159,7 +162,7 @@ public class Indexing {
 	}
 
 
-	private static List<Article> getAllArticlesFromSource(String sourceID, int j) throws MalformedURLException, IOException, ProtocolException {
+	private static Set<Article> getAllArticlesFromSource(String sourceID, int j) throws MalformedURLException, IOException, ProtocolException {
 		String YOUR_APIKEY = NewsBootUtils.loadAPIKey();
 		
 //		System.out.println("\n\n--------------------- Source "+j+": "+sourceID+" -------------------------");
@@ -174,7 +177,7 @@ public class Indexing {
 			StringBuffer response = NewsBootUtils.obtainResponse(con);			
 			String prettyJsonString = NewsBootUtils.formatJson(response.toString());
 			RespArticles resp = NewsBootUtils.buildRespPOJO(prettyJsonString);
-			List<Article> articles = resp.getArticles();
+			Set<Article> articles = resp.getArticles();
 			
 			return articles;		
 		} else {
