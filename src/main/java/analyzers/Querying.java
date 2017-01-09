@@ -1,6 +1,7 @@
 package analyzers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 
 import org.apache.lucene.analysis.TokenStream;
@@ -43,10 +44,11 @@ public class Querying {
 		Directory dir1 = FSDirectory.open(articlesIndex);
 		DirectoryReader reader1 = DirectoryReader.open(dir1);
 		IndexSearcher artSearcher1 = new IndexSearcher(reader1);
-		artSearcher1.setSimilarity(new BM25Similarity());
+		artSearcher1.setSimilarity(new BM25Similarity());		
 		TopDocs topdocs1 = artSearcher1.search(q, 20);
 		ScoreDoc[] resultList1 = topdocs1.scoreDocs; 
 		System.out.println("BM25 Similarity results: " + topdocs1.totalHits + " - we show top 20");
+		
 		for (int i = 0; i < resultList1.length; i++) {
 			Document art = artSearcher1.doc(resultList1[i].doc);
 			float score = resultList1[i].score;
@@ -58,6 +60,11 @@ public class Querying {
 			if (art.getField("source") != null) 
 				asource = art.getField("source").stringValue();
 			System.out.println("	title: <" + atitle + "> source: <"+asource+"> *** Score: " + score);
+			
+			String filename = "explainations/exp_score_"+i+".txt";
+			PrintWriter out = new PrintWriter(filename);
+			out.println(((artSearcher1.explain(q, resultList1[i].doc)).toString()));
+			out.close();
 		}
 
 		
