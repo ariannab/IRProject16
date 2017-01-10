@@ -15,6 +15,8 @@ import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
@@ -40,11 +42,13 @@ public class Indexing {
 	private static String YOUR_TOKEN;
 	private static String YOUR_TOKENSECRET;
 
-	public static Document userDoc(String username, String timeline, List<String> friendsTimeline) throws IOException {
+	public static Document userDoc(String username, String timeline, List<String> friendsTimeline, int friends) throws IOException {
 		Field userNameField = new StringField("username", username, Field.Store.YES);
+		StoredField  totFriendsField = new StoredField ("friends", friends);
 		
 		Document profile = new Document();
 		profile.add(userNameField);
+		profile.add(totFriendsField);
 		
 		FieldType myFieldType = new FieldType(TextField.TYPE_STORED);
 		myFieldType.setStoreTermVectors(true);		
@@ -74,10 +78,10 @@ public class Indexing {
 	
 	public static void main(String args[]) throws TwitterException, IOException{		
 		System.out.println("\nBuilding news index, then user index...");
-//		Path artIndex = Paths.get("./indexes/article_index");
+		Path artIndex = Paths.get("./indexes/article_index");
 //		Path userIndex = Paths.get("./indexes/profile_index");
 		
-		Path artIndex = buildNewsIndex();
+//		Path artIndex = buildNewsIndex();
 		Path userIndex = buildUserIndex();	
 		
 		System.out.println("\n\nNow querying!");
@@ -113,15 +117,17 @@ public class Indexing {
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
 		String userName = TwitterBootUtils.loadUsernames();
-		System.out.println("User is: "+userName);
 		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName);
 		
 		List<Long> friends = TwitterBootUtils.getFollowingList(twitter, userName);
 		friends.retainAll(TwitterBootUtils.getFollowersList(twitter, userName));
+		
+		int totalFriends = friends.size();
+		System.out.println("\nUser is: "+userName+" and has "+totalFriends+" friends");
 		List<String> friendsTimeline = TwitterBootUtils.getFriendsTimeline(twitter, friends);
 
 
-		Document profile = userDoc(userName, timeline, friendsTimeline);
+		Document profile = userDoc(userName, timeline, friendsTimeline, totalFriends);
 		iwriter2.addDocument(profile);
 		iwriter2.close();
 		analyzer.close();
