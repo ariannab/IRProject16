@@ -11,6 +11,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.index.Terms;
+import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -23,22 +25,33 @@ import org.apache.lucene.search.BooleanQuery.Builder;
 import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 
 public class Querying {
 	private static CustomAnalyzer analyzer;
 
 	public static void makeQuery(Path userIndex, Path articlesIndex, CustomAnalyzer extAnalyz) throws IOException {
+//		final long startTime = System.currentTimeMillis();		
+		
 		analyzer = extAnalyz;
 		Directory dir = FSDirectory.open(userIndex);
+		
 		// initialize the index reader
 		DirectoryReader reader = DirectoryReader.open(dir);
-		Document doc = reader.document(0);
+//		Document doc = reader.document(0);
 		BooleanQuery.setMaxClauseCount(10000000);
-		Builder qBuilder = new BooleanQuery.Builder();
+		Builder qBuilder = new BooleanQuery.Builder();		
 		
-		qBuilder = addTokensForQuery(doc, "utags", qBuilder, (float) 0.7);
-		qBuilder = addTokensForQuery(doc, "ftags", qBuilder, (float) 0.3);
-
+		float uboost = 0.7f;
+		Terms uTermVector = reader.getTermVector(0, "utags");
+		TermsEnum termIt = uTermVector.iterator();
+		qBuilder = addTokensInQuery(termIt, qBuilder, uboost);
+		
+		float fboost = 0.3f;
+		Terms fTermVector = reader.getTermVector(0, "ftags");
+		termIt = fTermVector.iterator();
+		qBuilder = addTokensInQuery(termIt, qBuilder, fboost);
+		
 		BooleanQuery q = qBuilder.build();		
 		
 		Directory dir1 = FSDirectory.open(articlesIndex);
@@ -59,34 +72,54 @@ public class Querying {
 
 			if (art.getField("source") != null) 
 				asource = art.getField("source").stringValue();
-			System.out.println("	title: <" + atitle + "> source: <"+asource+"> *** Score: " + score);
+			System.out.println("	title #"+(i+1)+": <" + atitle + "> source: <"+asource+"> *** Score: " + score);
 			
-			String filename = "explainations/exp_score_"+i+".txt";
+			String filename = "explainations/exp_score_"+(i+1)+".txt";
 			PrintWriter out = new PrintWriter(filename);
 			out.println(((artSearcher1.explain(q, resultList1[i].doc)).toString()));
 			out.close();
 		}
 
+//		final long endTime = System.currentTimeMillis();
+//		System.out.println("\nTotal execution time: " + (endTime - startTime) );		
 		
 	}
 
-	private static Builder addTokensForQuery(Document doc, String fieldName, Builder qBuilder, float boost) throws IOException {
-		IndexableField ufield = doc.getField(fieldName);
-		TokenStream stream =ufield.tokenStream(analyzer, null);
-		CharTermAttribute termAtt = stream.addAttribute(CharTermAttribute.class);
-
-		try {
-			stream.reset();
-			while (stream.incrementToken()) {
-				Query qTerm = new TermQuery(new Term("atags", termAtt.toString()));
-				BoostQuery boostQ = new BoostQuery(qTerm, boost);				
-				qBuilder.add(boostQ, BooleanClause.Occur.SHOULD);
-			}
-			stream.end();
-		} finally {
-			stream.close();
+	private static Builder addTokensInQuery(TermsEnum termIt, Builder qBuilder, float boost) throws IOException {
+		
+		BytesRef t;
+		while((t = termIt.next()) != null){
+			String termString = t.utf8ToString();
+			float freq = termIt.totalTermFreq();
+			float finalBoost = boost * freq;
+			
+			Query qTerm = new TermQuery(new Term("atags", termString));
+			BoostQuery boostQ = new BoostQuery(qTerm, finalBoost);				
+			qBuilder.add(boostQ, BooleanClause.Occur.SHOULD);
+			
 		}
+		
 		return qBuilder;
+		
 	}
+
+//	private static Builder addTokensForQuery(Document doc, String fieldName, Builder qBuilder, float boost) throws IOException {
+//		IndexableField ufield = doc.getField(fieldName);
+//		TokenStream stream =ufield.tokenStream(analyzer, null);
+//		CharTermAttribute termAtt = stream.addAttribute(CharTermAttribute.class);
+//
+//		try {
+//			stream.reset();
+//			while (stream.incrementToken()) {
+//				Query qTerm = new TermQuery(new Term("atags", termAtt.toString()));
+//				BoostQuery boostQ = new BoostQuery(qTerm, boost);				
+//				qBuilder.add(boostQ, BooleanClause.Occur.SHOULD);
+//			}
+//			stream.end();
+//		} finally {
+//			stream.close();
+//		}
+//		return qBuilder;
+//	}
 
 }

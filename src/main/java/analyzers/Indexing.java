@@ -73,13 +73,12 @@ public class Indexing {
 	}
 	
 	public static void main(String args[]) throws TwitterException, IOException{		
-		System.out.println("\nBuilding news index...");
-		Path artIndex = buildNewsIndex();
+		System.out.println("\nBuilding news index, then user index...");
 //		Path artIndex = Paths.get("./indexes/article_index");
-		
-		System.out.println("\nBuilding user index...");
-		Path userIndex = buildUserIndex();	
 //		Path userIndex = Paths.get("./indexes/profile_index");
+		
+		Path artIndex = buildNewsIndex();
+		Path userIndex = buildUserIndex();	
 		
 		System.out.println("\n\nNow querying!");
 
