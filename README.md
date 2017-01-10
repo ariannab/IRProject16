@@ -10,7 +10,7 @@ To make it work, some resources are needed:
   Here you have to put all your Twitter keys (one-per-line)
   
 2. ```newsKey.txt``` <br />
-  Here you simple put you news API key
+  Here you simple put your news API key
   
 3. ``` usernames.txt``` <br />
   Here you list some twitter usernames (again one-per-line). For now, no matter how many they are: the loader will take just the first.
