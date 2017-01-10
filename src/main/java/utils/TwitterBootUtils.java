@@ -26,7 +26,7 @@ public class TwitterBootUtils {
 		return list;
 	}
 	
-	public static String loadUsernames() throws FileNotFoundException {
+	public static List loadUsernames() throws FileNotFoundException {
 		// TODO this method will retrieve 10 usernames from the file,
 		// for now it is just one
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -34,11 +34,12 @@ public class TwitterBootUtils {
 
 		List<String> list = new ArrayList<String>();
 		Scanner s = new Scanner(file);
-		if (s.hasNextLine())
+		while (s.hasNextLine())
 			list.add(s.nextLine());
 
 		s.close();
-		return list.get(0);
+		//System.out.println(list.size());
+		return list;
 	}
 	
 	public static String getStringTimeline(Twitter twitter, String userName) throws TwitterException {

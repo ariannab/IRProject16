@@ -32,6 +32,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 import utils.NewsBootUtils;
 import utils.TwitterBootUtils;
+import GUI.GuiIR;
 
 public class Indexing {
 
@@ -72,7 +73,7 @@ public class Indexing {
 		
 	}
 	
-	public static void main(String args[]) throws TwitterException, IOException{		
+	public static void main() throws TwitterException, IOException{
 		System.out.println("\nBuilding news index...");
 		Path artIndex = buildNewsIndex();
 //		Path artIndex = Paths.get("./indexes/article_index");
@@ -113,7 +114,7 @@ public class Indexing {
 
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
-		String userName = TwitterBootUtils.loadUsernames();
+		String userName = TwitterBootUtils.loadUsernames().get(0).toString();
 		System.out.println("User is: "+userName);
 		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName);
 		

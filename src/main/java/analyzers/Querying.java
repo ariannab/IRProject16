@@ -23,6 +23,8 @@ import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
+import GUI.GuiIR;
+
 public class Querying {
 	private static CustomAnalyzer analyzer;
 
