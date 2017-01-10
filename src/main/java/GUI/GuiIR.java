@@ -4,7 +4,10 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
+import analyzers.CustomAnalyzerFactory;
 import analyzers.Indexing;
+import analyzers.Querying;
+import model.User;
 import twitter4j.TwitterException;
 
 import javax.swing.DefaultListModel;
@@ -13,6 +16,7 @@ import javax.swing.JButton;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -20,9 +24,13 @@ import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.AbstractListModel;
 import java.awt.Color;
 import javax.swing.border.LineBorder;
+
+import org.apache.lucene.analysis.custom.CustomAnalyzer;
+
 import javax.swing.JTextField;
 
 public class GuiIR {
@@ -51,7 +59,6 @@ public class GuiIR {
 					DefaultListModel dlm = new DefaultListModel();
 					System.out.println("Entra");
 					for(String user : users){
-						System.out.println(user);
 						listUsers.add(user);
 					}
 					
@@ -114,10 +121,33 @@ public class GuiIR {
 		btnSearchNews.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				String user = listUsers.getSelectedItem().toString();
-				Dettails dt = new Dettails();
-				dt.dettails(user);
-				
+				System.out.println(listUsers.getSelectedIndex());
+				if(listUsers.getSelectedIndex()== -1){
+					JOptionPane.showMessageDialog(frameMain,
+						    "Select an user",
+						    "Warning",
+						    JOptionPane.WARNING_MESSAGE);
+				}
+				else{
+					String txtuser = listUsers.getSelectedItem().toString();
+					Path artIndex;
+					try {
+						artIndex = artIndex = Indexing.buildNewsIndex();
+						User user = Indexing.buildUserIndex(txtuser);
+						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
+						Querying.makeQuery(user.getUser_index_path(), artIndex, analyzer);
+						analyzer.close();
+						Dettails.dettails(user);
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					} catch (TwitterException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+						
+					
+				}
 			}
 		});
 		

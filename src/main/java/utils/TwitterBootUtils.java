@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import model.User;
 import twitter4j.IDs;
 import twitter4j.Paging;
 import twitter4j.Status;
@@ -47,7 +48,7 @@ public class TwitterBootUtils {
 			List<Status> statuses = twitter.getUserTimeline(userName, new Paging());
 			String timeline = "";
 			for (Status status : statuses) {
-				timeline += status.getText() + " ";
+				timeline += status.getText() + " " + "\n";
 			}
 			// System.out.println("\n\n"+timeline);
 			return timeline;

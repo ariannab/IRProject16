@@ -1,10 +1,29 @@
 package model;
 
+import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class User {
 	String name;
+	Path user_index_path;
+	String timelineUser;
+	List<String> timelineFriends;
+	
+	
+	public List<String> getTimelineFriends() {
+		return timelineFriends;
+	}
+	public void setTimelineFriends(List<String> timelineFriends) {
+		this.timelineFriends = timelineFriends;
+	}
+	public String getTimelineUser() {
+		return timelineUser;
+	}
+	public void setTimelineUser(String timelineUser) {
+		this.timelineUser = timelineUser;
+	}
 	public User(String name) {
 		super();
 		this.name = name;
@@ -29,4 +48,11 @@ public class User {
 		//to User's own tweets
 		this.fTweets.removeAll(tweets);
 	}
+	public Path getUser_index_path() {
+		return user_index_path;
+	}
+	public void setPath(Path user_index_path) {
+		this.user_index_path = user_index_path;
+	}
+
 }

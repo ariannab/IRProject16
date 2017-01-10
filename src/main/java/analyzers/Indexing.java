@@ -26,6 +26,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import model.Article;
 import model.RespArticles;
+import model.User;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -79,19 +80,22 @@ public class Indexing {
 //		Path artIndex = Paths.get("./indexes/article_index");
 		
 		System.out.println("\nBuilding user index...");
-		Path userIndex = buildUserIndex();	
+		//Path userIndex = buildUserIndex();	
 //		Path userIndex = Paths.get("./indexes/profile_index");
 		
 		System.out.println("\n\nNow querying!");
 
 		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
-		Querying.makeQuery(userIndex, artIndex, analyzer);		
+		//Querying.makeQuery(userIndex, artIndex, analyzer);		
 		analyzer.close();
 	}
 	
-	private static Path buildUserIndex() throws IOException, TwitterException {
+	public static User buildUserIndex(String txtUser) throws IOException, TwitterException {
+		User user = new User(txtUser);
 		Path userIndex = new File("./indexes/profile_index").toPath();
 		Directory dir = FSDirectory.open(userIndex);
+		user.setPath(userIndex);
+		
 
 		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
@@ -114,13 +118,15 @@ public class Indexing {
 
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
-		String userName = TwitterBootUtils.loadUsernames().get(0).toString();
+		String userName = txtUser;
 		System.out.println("User is: "+userName);
 		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName);
+		user.setTimelineUser(timeline);
 		
 		List<Long> friends = TwitterBootUtils.getFollowingList(twitter, userName);
 		friends.retainAll(TwitterBootUtils.getFollowersList(twitter, userName));
 		List<String> friendsTimeline = TwitterBootUtils.getFriendsTimeline(twitter, friends);
+		user.setTimelineFriends(friendsTimeline);
 
 
 		Document profile = userDoc(userName, timeline, friendsTimeline);
@@ -128,11 +134,11 @@ public class Indexing {
 		iwriter2.close();
 		analyzer.close();
 		
-		return userIndex;
+		return user;
 		
 	}
 
-	private static Path buildNewsIndex() throws IOException {
+	public static Path buildNewsIndex() throws IOException {
 		Path artIndex = new File("./indexes/article_index").toPath();
 		Directory dir = FSDirectory.open(artIndex);
 		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
@@ -163,7 +169,7 @@ public class Indexing {
 	}
 
 
-	private static Set<Article> getAllArticlesFromSource(String sourceID, int j) throws MalformedURLException, IOException, ProtocolException {
+	public static Set<Article> getAllArticlesFromSource(String sourceID, int j) throws MalformedURLException, IOException, ProtocolException {
 		String YOUR_APIKEY = NewsBootUtils.loadAPIKey();
 		
 //		System.out.println("\n\n--------------------- Source "+j+": "+sourceID+" -------------------------");
