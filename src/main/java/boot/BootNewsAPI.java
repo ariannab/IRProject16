@@ -25,48 +25,7 @@ public class BootNewsAPI {
 		int i = 0;
 		for(String id : enSourcesIDs){
 			i++;
-			getAllArticlesFromSource(id, i);
-		}
-	}
-
-	private static void getAllArticlesFromSource(String sourceID, int j) throws MalformedURLException, IOException, ProtocolException {
-		YOUR_APIKEY = NewsBootUtils.loadAPIKey();
-		
-		System.out.println("\n\n--------------------- Source "+j+": "+sourceID+" -------------------------");
-		URL obj = new URL("https://newsapi.org/v1/articles?source="+sourceID+"&apiKey="+YOUR_APIKEY);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-		con.setRequestMethod("GET");
-		int responseCode = con.getResponseCode();
-		System.out.println("GET Response Code :: " + responseCode);
-		
-		if (responseCode == HttpURLConnection.HTTP_OK) { 
-			// success
-			StringBuffer response = NewsBootUtils.obtainResponse(con);			
-			String prettyJsonString = NewsBootUtils.formatJson(response.toString());
-//			System.out.println(prettyJsonString);
-			RespArticles resp = NewsBootUtils.buildRespPOJO(prettyJsonString);
-			Set<Article> articles = resp.getArticles();
-//			for (Article a : articles)
-//				System.out.println(a);
-			
-			int i=0;
-			for(Article a : articles){
-				try {
-					i++;
-					System.out.println("\nArticle #"+i);
-					String title = a.getTitle();
-					if(title!=null)
-						a.getTags().addAll(tokenize(title));
-					String desc = a.getDescription();
-					if(desc!=null)
-						a.getTags().addAll(tokenize(desc));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				System.out.println(a.getTags().toString());
-			}				
-		} else {
-			System.out.println("GET request not worked");
+			NewsBootUtils.getAllArticlesFromSource(id, i);
 		}
 	}
 	

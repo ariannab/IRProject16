@@ -4,12 +4,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 
-import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.index.TermsEnum;
@@ -28,15 +25,13 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 
 public class Querying {
-	private static CustomAnalyzer analyzer;
-	static float uboost = 0.6f;
-	static float fboost = 0.4f;
+	static float uboost = 0.8f;
+	static float fboost = 0.2f;
 	
 
 	public static void makeQuery(Path userIndex, Path articlesIndex, CustomAnalyzer extAnalyz) throws IOException {
 //		final long startTime = System.currentTimeMillis();		
 		
-		analyzer = extAnalyz;
 		Directory dir = FSDirectory.open(userIndex);
 		
 		// initialize the index reader

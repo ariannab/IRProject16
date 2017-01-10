@@ -18,6 +18,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import model.Article;
 import model.RespArticles;
 import model.RespSources;
 import model.Source;
@@ -91,6 +92,30 @@ public class NewsBootUtils {
 		} finally {
 			s.close();
 		}
+	}
+	
+	public static Set<Article> getAllArticlesFromSource(String sourceID, int j) throws MalformedURLException, IOException, ProtocolException {
+		String YOUR_APIKEY = NewsBootUtils.loadAPIKey();
+		
+//		System.out.println("\n\n--------------------- Source "+j+": "+sourceID+" -------------------------");
+		URL obj = new URL("https://newsapi.org/v1/articles?source="+sourceID+"&apiKey="+YOUR_APIKEY);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		con.setRequestMethod("GET");
+		int responseCode = con.getResponseCode();
+//		System.out.println("GET Response Code :: " + responseCode);
+		
+		if (responseCode == HttpURLConnection.HTTP_OK) { 
+			// success
+			StringBuffer response = NewsBootUtils.obtainResponse(con);			
+			String prettyJsonString = NewsBootUtils.formatJson(response.toString());
+			RespArticles resp = NewsBootUtils.buildRespPOJO(prettyJsonString);
+			Set<Article> articles = resp.getArticles();
+			
+			return articles;		
+		} else {
+			System.out.println("GET request not worked");
+		}
+		return null;
 	}
 
 }

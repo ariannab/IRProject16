@@ -2,12 +2,7 @@ package analyzers;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +21,6 @@ import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import model.Article;
-import model.RespArticles;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -152,7 +146,7 @@ public class Indexing {
 		Set<Article> articles = null;
 		for(String id : enSourcesIDs){
 			i++;
-			articles = getAllArticlesFromSource(id, i);
+			articles = NewsBootUtils.getAllArticlesFromSource(id, i);
 			for(Article a : articles){
 				Document article = articleDoc(a.getTitle(), a.getDescription(), id);	
 				iwriter1.addDocument(article);
@@ -166,27 +160,5 @@ public class Indexing {
 	}
 
 
-	private static Set<Article> getAllArticlesFromSource(String sourceID, int j) throws MalformedURLException, IOException, ProtocolException {
-		String YOUR_APIKEY = NewsBootUtils.loadAPIKey();
-		
-//		System.out.println("\n\n--------------------- Source "+j+": "+sourceID+" -------------------------");
-		URL obj = new URL("https://newsapi.org/v1/articles?source="+sourceID+"&apiKey="+YOUR_APIKEY);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-		con.setRequestMethod("GET");
-		int responseCode = con.getResponseCode();
-//		System.out.println("GET Response Code :: " + responseCode);
-		
-		if (responseCode == HttpURLConnection.HTTP_OK) { 
-			// success
-			StringBuffer response = NewsBootUtils.obtainResponse(con);			
-			String prettyJsonString = NewsBootUtils.formatJson(response.toString());
-			RespArticles resp = NewsBootUtils.buildRespPOJO(prettyJsonString);
-			Set<Article> articles = resp.getArticles();
-			
-			return articles;		
-		} else {
-			System.out.println("GET request not worked");
-		}
-		return null;
-	}
+
 }
