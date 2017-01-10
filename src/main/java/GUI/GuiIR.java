@@ -135,7 +135,7 @@ public class GuiIR {
 						artIndex = artIndex = Indexing.buildNewsIndex();
 						User user = Indexing.buildUserIndex(txtuser);
 						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
-						Querying.makeQuery(user.getUser_index_path(), artIndex, analyzer);
+						user.setRankingArticle(Querying.makeQuery(user.getUser_index_path(), artIndex, analyzer,user));
 						analyzer.close();
 						Dettails.dettails(user);
 					} catch (IOException e2) {

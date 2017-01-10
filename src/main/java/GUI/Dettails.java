@@ -17,14 +17,18 @@ import twitter4j.TwitterException;
 
 import java.awt.BorderLayout;
 import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import java.awt.Font;
 
 public class Dettails {
 
 	private JFrame frame;
-	static JLabel txtUsername;
+	private JLabel txtUsername;
 	User user;
-	static String txtUser;
-	static JTextArea txtTimeline;
+	private JScrollPane scrollPane;
+	private JTextArea textArea;
+
 	/**
 	 * Launch the application.
 	 * @throws IOException 
@@ -39,7 +43,15 @@ public class Dettails {
 					System.out.println("-------------------");
 					System.out.println(user.getTimelineUser());
 					TimelineUser.timelineuser(user);
-					txtTimeline.append("Qua articoli suggeriti");
+					timelineFriends.timelineFriends(user);
+					window.txtUsername.setText("User: " + user.getName());
+					int i = 1;
+					for(String article : user.getRankingArticle() ){
+						window.textArea.append(i + ") " + article + "\n");
+						i++;
+					}
+					
+
 			}
 			
 		});
@@ -59,24 +71,29 @@ public class Dettails {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(500, 500, 1000, 1000);
+		frame.setBounds(500, 500, 1000, 666);
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		txtUsername = new JLabel("");
+		txtUsername.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		txtUsername.setBounds(29, 21, 235, 25);
 		frame.getContentPane().add(txtUsername);
 		System.out.println("Creo username");
-		txtUsername.setText(txtUser);
 		
 		JLabel lblLink = new JLabel("Link");
 		lblLink.setBounds(297, 30, 61, 16);
 		frame.getContentPane().add(lblLink);
 		
-		txtTimeline = new JTextArea();
-		txtTimeline.setBounds(6, 81, 988, 878);
-		frame.getContentPane().add(txtTimeline);
-		System.out.println("Finito username");
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(6, 77, 988, 534);
+		frame.getContentPane().add(scrollPane);
+		
+		textArea = new JTextArea();
+		textArea.setEditable(false);
+		scrollPane.setViewportView(textArea);
+		
+		
 
 	}
 }

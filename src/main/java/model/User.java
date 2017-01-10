@@ -1,6 +1,7 @@
 package model;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,7 @@ public class User {
 	Path user_index_path;
 	String timelineUser;
 	List<String> timelineFriends;
+	List<String> rankingArticle;
 	
 	
 	public List<String> getTimelineFriends() {
@@ -29,6 +31,14 @@ public class User {
 		this.name = name;
 		this.tweets=new HashSet<String>();
 		this.fTweets=new HashSet<String>();
+		this.timelineFriends = new ArrayList<String>();
+		this.rankingArticle = new ArrayList<String>();
+	}
+	public List<String> getRankingArticle() {
+		return rankingArticle;
+	}
+	public void setRankingArticle(List<String> rankingArticle) {
+		this.rankingArticle = rankingArticle;
 	}
 	Set<String> tweets;
 	Set<String> fTweets;

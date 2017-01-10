@@ -48,7 +48,7 @@ public class TwitterBootUtils {
 			List<Status> statuses = twitter.getUserTimeline(userName, new Paging());
 			String timeline = "";
 			for (Status status : statuses) {
-				timeline += status.getText() + " " + "\n";
+				timeline += status.getText() + " " + "\n\n";
 			}
 			// System.out.println("\n\n"+timeline);
 			return timeline;

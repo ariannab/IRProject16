@@ -2,6 +2,8 @@ package analyzers;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
@@ -24,12 +26,14 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import GUI.GuiIR;
+import model.User;
 
 public class Querying {
 	private static CustomAnalyzer analyzer;
 
-	public static void makeQuery(Path userIndex, Path articlesIndex, CustomAnalyzer extAnalyz) throws IOException {
+	public static List<String> makeQuery(Path userIndex, Path articlesIndex, CustomAnalyzer extAnalyz,User user) throws IOException {
 		analyzer = extAnalyz;
+		List<String> articleRanking = new ArrayList<String>();
 		Directory dir = FSDirectory.open(userIndex);
 		// initialize the index reader
 		DirectoryReader reader = DirectoryReader.open(dir);
@@ -59,8 +63,10 @@ public class Querying {
 
 			if (art.getField("source") != null) 
 				asource = art.getField("source").stringValue();
+			articleRanking.add("title: <" + atitle + "> source: <"+asource+"> *** Score: " + score + "\n");
 			System.out.println("	title: <" + atitle + "> source: <"+asource+"> *** Score: " + score);
 		}
+		return articleRanking;
 
 		
 	}
