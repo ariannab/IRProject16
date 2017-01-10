@@ -33,6 +33,7 @@ public class GuiIR {
 	static java.awt.List listUsers;
 	static JTextField txtAddUser;
 	static JButton btnAddUser;
+	private JButton btnSearchNews;
 
 	/**
 	 * Launch the application.
@@ -74,7 +75,7 @@ public class GuiIR {
 	 */
 	private void initialize() {
 		frameMain = new JFrame();
-		frameMain.setBounds(100, 100, 800, 800);
+		frameMain.setBounds(100, 100, 600, 400);
 		frameMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameMain.getContentPane().setLayout(null);
 		
@@ -106,5 +107,19 @@ public class GuiIR {
 				
 			}
 		});
+		
+		btnSearchNews = new JButton("Search News");
+		btnSearchNews.setBounds(449, 98, 117, 29);
+		frameMain.getContentPane().add(btnSearchNews);
+		btnSearchNews.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				String user = listUsers.getSelectedItem().toString();
+				Dettails dt = new Dettails();
+				dt.dettails(user);
+				
+			}
+		});
+		
 	}
 }
