@@ -1,5 +1,6 @@
 package analyzers;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
@@ -46,6 +47,8 @@ public class Querying {
 		BooleanQuery.setMaxClauseCount(100000);
 		Builder qBuilder = new BooleanQuery.Builder();		
 
+		//we stored the term vector during indexing phase,
+		//so we're able to retrieve it now
 		Terms uTermVector = uReader.getTermVector(0, "utags");
 		TermsEnum termIt = uTermVector.iterator();
 		qBuilder = addTokensInQuery(termIt, qBuilder, uboost);
@@ -61,10 +64,20 @@ public class Querying {
 		IndexSearcher artSearcher = new IndexSearcher(newsReader);
 		artSearcher.setSimilarity(new BM25Similarity());
 		
+		//submit query to the news index
 		TopDocs topdocs = artSearcher.search(query, 20);
 		ScoreDoc[] resultList = topdocs.scoreDocs; 
 		System.out.println("BM25 Similarity results: " + topdocs.totalHits + " - we show top 20");
 		
+		printQueryResult(query, artSearcher, resultList);
+
+//		final long endTime = System.currentTimeMillis();
+//		System.out.println("\nTotal execution time: " + (endTime - startTime) );		
+		
+	}
+
+	private static void printQueryResult(BooleanQuery query, IndexSearcher artSearcher, ScoreDoc[] resultList)
+			throws IOException, FileNotFoundException {
 		for (int i = 0; i < resultList.length; i++) {
 			Document art = artSearcher.doc(resultList[i].doc);
 			float score = resultList[i].score;
@@ -82,10 +95,6 @@ public class Querying {
 			out.println(((artSearcher.explain(query, resultList[i].doc)).toString()));
 			out.close();
 		}
-
-//		final long endTime = System.currentTimeMillis();
-//		System.out.println("\nTotal execution time: " + (endTime - startTime) );		
-		
 	}
 
 	/**
@@ -103,6 +112,7 @@ public class Querying {
 		while((t = termIt.next()) != null){
 			String termString = t.utf8ToString();
 			float freq = termIt.totalTermFreq();
+			//final boost for the term is base boost multiplied by term frequency
 			float finalBoost = boost * freq;
 			
 			Query qTerm = new TermQuery(new Term("atags", termString));

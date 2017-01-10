@@ -28,7 +28,7 @@ public class TwitterBootUtils {
 	
 	public static String loadUsernames() throws FileNotFoundException {
 		// TODO this method will retrieve 10 usernames from the file,
-		// for now it is just one
+		// for now it is just one (the first)
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		File file = new File(classloader.getResource("usernames.txt").getFile());
 
