@@ -29,6 +29,9 @@ import org.apache.lucene.util.BytesRef;
 
 public class Querying {
 	private static CustomAnalyzer analyzer;
+	static float uboost = 0.6f;
+	static float fboost = 0.4f;
+	
 
 	public static void makeQuery(Path userIndex, Path articlesIndex, CustomAnalyzer extAnalyz) throws IOException {
 //		final long startTime = System.currentTimeMillis();		
@@ -41,13 +44,11 @@ public class Querying {
 //		Document doc = reader.document(0);
 		BooleanQuery.setMaxClauseCount(10000000);
 		Builder qBuilder = new BooleanQuery.Builder();		
-		
-		float uboost = 0.7f;
+
 		Terms uTermVector = reader.getTermVector(0, "utags");
 		TermsEnum termIt = uTermVector.iterator();
 		qBuilder = addTokensInQuery(termIt, qBuilder, uboost);
 		
-		float fboost = 0.3f;
 		Terms fTermVector = reader.getTermVector(0, "ftags");
 		termIt = fTermVector.iterator();
 		qBuilder = addTokensInQuery(termIt, qBuilder, fboost);

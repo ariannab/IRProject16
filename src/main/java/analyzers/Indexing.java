@@ -15,7 +15,6 @@ import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
-import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
@@ -78,10 +77,10 @@ public class Indexing {
 	
 	public static void main(String args[]) throws TwitterException, IOException{		
 		System.out.println("\nBuilding news index, then user index...");
-		Path artIndex = Paths.get("./indexes/article_index");
+//		Path artIndex = Paths.get("./indexes/article_index");
 //		Path userIndex = Paths.get("./indexes/profile_index");
 		
-//		Path artIndex = buildNewsIndex();
+		Path artIndex = buildNewsIndex();
 		Path userIndex = buildUserIndex();	
 		
 		System.out.println("\n\nNow querying!");
