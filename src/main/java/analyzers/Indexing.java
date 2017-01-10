@@ -35,6 +35,16 @@ public class Indexing {
 	private static String YOUR_TOKEN;
 	private static String YOUR_TOKENSECRET;
 
+	/**
+	 * Build user document (i.e. the profile)
+	 * 
+	 * @param username
+	 * @param timeline
+	 * @param friendsTimeline
+	 * @param friends
+	 * @return the document
+	 * @throws IOException
+	 */
 	public static Document userDoc(String username, String timeline, List<String> friendsTimeline, int friends) throws IOException {
 		Field userNameField = new StringField("username", username, Field.Store.YES);
 		StoredField  totFriendsField = new StoredField ("friends", friends);
@@ -44,6 +54,7 @@ public class Indexing {
 		profile.add(totFriendsField);
 		
 		FieldType myFieldType = new FieldType(TextField.TYPE_STORED);
+		//we need to store the term vectors if we want the term frequency in the user document
 		myFieldType.setStoreTermVectors(true);		
 		Field utags = new Field("utags", timeline, myFieldType);		
 //		TextField utags = new TextField("utags", timeline, Field.Store.YES);
@@ -57,6 +68,16 @@ public class Indexing {
 
 	}
 	
+	
+	/**
+	 * Build article document 
+	 * 
+	 * @param title
+	 * @param description
+	 * @param sourceID
+	 * @return the document
+	 * @throws IOException
+	 */
 	public static Document articleDoc(String title, String description, String sourceID) throws IOException{		
 		Field titleField = new StringField("title", title, Field.Store.YES);	
 		Field sourceField = new StringField("source", sourceID, Field.Store.YES);
@@ -69,21 +90,13 @@ public class Indexing {
 		
 	}
 	
-	public static void main(String args[]) throws TwitterException, IOException{		
-		System.out.println("\nBuilding news index, then user index...");
-//		Path artIndex = Paths.get("./indexes/article_index");
-//		Path userIndex = Paths.get("./indexes/profile_index");
-		
-		Path artIndex = buildNewsIndex();
-		Path userIndex = buildUserIndex();	
-		
-		System.out.println("\n\nNow querying!");
-
-		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
-		Querying.makeQuery(userIndex, artIndex, analyzer);		
-		analyzer.close();
-	}
-	
+	/**
+	 * Build the complete user index
+	 * 
+	 * @return the path where the index is stored
+	 * @throws IOException
+	 * @throws TwitterException
+	 */
 	private static Path buildUserIndex() throws IOException, TwitterException {
 		Path userIndex = new File("./indexes/profile_index").toPath();
 		Directory dir = FSDirectory.open(userIndex);
@@ -129,6 +142,12 @@ public class Indexing {
 		
 	}
 
+	/**
+	 * Build the complete news index
+	 * 
+	 * @return the path where the index is stored
+	 * @throws IOException
+	 */
 	private static Path buildNewsIndex() throws IOException {
 		Path artIndex = new File("./indexes/article_index").toPath();
 		Directory dir = FSDirectory.open(artIndex);
@@ -158,7 +177,18 @@ public class Indexing {
 		return artIndex;
 		
 	}
+	
+	public static void main(String args[]) throws TwitterException, IOException{		
+		System.out.println("\nBuilding news index, then user index...");
+//		Path artIndex = Paths.get("./indexes/article_index");
+//		Path userIndex = Paths.get("./indexes/profile_index");
+		
+		Path artIndex = buildNewsIndex();
+		Path userIndex = buildUserIndex();	
+		
+		System.out.println("\n\nNow querying!");
 
-
+		Querying.makeQuery(userIndex, artIndex);	
+	}
 
 }

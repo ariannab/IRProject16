@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 
-import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.Term;
@@ -26,41 +25,49 @@ import org.apache.lucene.util.BytesRef;
 
 public class Querying {
 	static float uboost = 0.8f;
-	static float fboost = 0.2f;
-	
+	static float fboost = 0.2f;	
 
-	public static void makeQuery(Path userIndex, Path articlesIndex, CustomAnalyzer extAnalyz) throws IOException {
+	/**
+	 * Build and submit a boolean query to the news index. 
+	 * Clauses (OR) are user profile's tags 
+	 * (user plus friends ones, with different boosts)
+	 * 
+	 * @param userIndex
+	 * @param articlesIndex
+	 * @throws IOException
+	 */
+	public static void makeQuery(Path userIndex, Path articlesIndex) throws IOException {
 //		final long startTime = System.currentTimeMillis();		
 		
-		Directory dir = FSDirectory.open(userIndex);
+		Directory userDir = FSDirectory.open(userIndex);
 		
 		// initialize the index reader
-		DirectoryReader reader = DirectoryReader.open(dir);
-//		Document doc = reader.document(0);
-		BooleanQuery.setMaxClauseCount(10000000);
+		DirectoryReader uReader = DirectoryReader.open(userDir);
+		BooleanQuery.setMaxClauseCount(100000);
 		Builder qBuilder = new BooleanQuery.Builder();		
 
-		Terms uTermVector = reader.getTermVector(0, "utags");
+		Terms uTermVector = uReader.getTermVector(0, "utags");
 		TermsEnum termIt = uTermVector.iterator();
 		qBuilder = addTokensInQuery(termIt, qBuilder, uboost);
 		
-		Terms fTermVector = reader.getTermVector(0, "ftags");
+		Terms fTermVector = uReader.getTermVector(0, "ftags");
 		termIt = fTermVector.iterator();
 		qBuilder = addTokensInQuery(termIt, qBuilder, fboost);
 		
-		BooleanQuery q = qBuilder.build();		
+		BooleanQuery query = qBuilder.build();		
 		
-		Directory dir1 = FSDirectory.open(articlesIndex);
-		DirectoryReader reader1 = DirectoryReader.open(dir1);
-		IndexSearcher artSearcher1 = new IndexSearcher(reader1);
-		artSearcher1.setSimilarity(new BM25Similarity());		
-		TopDocs topdocs1 = artSearcher1.search(q, 20);
-		ScoreDoc[] resultList1 = topdocs1.scoreDocs; 
-		System.out.println("BM25 Similarity results: " + topdocs1.totalHits + " - we show top 20");
+		Directory newsDir = FSDirectory.open(articlesIndex);
+		DirectoryReader newsReader = DirectoryReader.open(newsDir);
+		IndexSearcher artSearcher = new IndexSearcher(newsReader);
+		artSearcher.setSimilarity(new BM25Similarity());
 		
-		for (int i = 0; i < resultList1.length; i++) {
-			Document art = artSearcher1.doc(resultList1[i].doc);
-			float score = resultList1[i].score;
+		TopDocs topdocs = artSearcher.search(query, 20);
+		ScoreDoc[] resultList = topdocs.scoreDocs; 
+		System.out.println("BM25 Similarity results: " + topdocs.totalHits + " - we show top 20");
+		
+		for (int i = 0; i < resultList.length; i++) {
+			Document art = artSearcher.doc(resultList[i].doc);
+			float score = resultList[i].score;
 			String atitle = "";
 			String asource = "";
 			if (art.getField("title") != null) 
@@ -72,7 +79,7 @@ public class Querying {
 			
 			String filename = "explainations/exp_score_"+(i+1)+".txt";
 			PrintWriter out = new PrintWriter(filename);
-			out.println(((artSearcher1.explain(q, resultList1[i].doc)).toString()));
+			out.println(((artSearcher.explain(query, resultList[i].doc)).toString()));
 			out.close();
 		}
 
@@ -81,6 +88,15 @@ public class Querying {
 		
 	}
 
+	/**
+	 * Add tokens (clauses) to the boolean query, adjusting the boost
+	 * 
+	 * @param termIt
+	 * @param qBuilder
+	 * @param boost
+	 * @return the updated query builder
+	 * @throws IOException
+	 */
 	private static Builder addTokensInQuery(TermsEnum termIt, Builder qBuilder, float boost) throws IOException {
 		
 		BytesRef t;
