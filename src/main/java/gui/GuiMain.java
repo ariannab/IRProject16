@@ -26,14 +26,14 @@ import org.apache.lucene.analysis.custom.CustomAnalyzer;
 
 import javax.swing.JTextField;
 
-public class GuiIR {
+public class GuiMain {
 
-	static JFrame frameMain;
-	static JLabel lblNewLabel_listOfUsers;
-	static List<String> users;
-	static java.awt.List listUsers;
-	static JTextField txtAddUser;
-	static JButton btnAddUser;
+	JFrame frameMain;
+	JLabel lblNewLabel_listOfUsers;
+	List<String> users;
+	java.awt.List listUsers;
+	JTextField txtAddUser;
+	JButton btnAddUser;
 	private JButton btnSearchNews;
 
 	/**
@@ -45,13 +45,13 @@ public class GuiIR {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GuiIR window = new GuiIR();
-					GuiIR.frameMain.setVisible(true);
-					users = new ArrayList<String>();
-					users = utils.TwitterBootUtils.loadUsernames();
+					GuiMain window = new GuiMain();
+					window.frameMain.setVisible(true);
+					window.users = new ArrayList<String>();
+					window.users = utils.TwitterBootUtils.loadUsernames();
 					System.out.println("Entered GUI");
-					for(String user : users){
-						listUsers.add(user);
+					for(String user : window.users){
+						window.listUsers.add(user);
 					}
 					
 					
@@ -65,7 +65,7 @@ public class GuiIR {
 	/**
 	 * Create the application.
 	 */
-	public GuiIR() {
+	public GuiMain() {
 		initialize();
 	}
 
@@ -128,18 +128,16 @@ public class GuiIR {
 					String txtuser = listUsers.getSelectedItem().toString();
 					try {
 						
-						//Path artIndex = artIndex = artIndex = Indexing.buildNewsIndex();
-						Path artIndex = Paths.get("./indexes/article_index");
+						Path artIndex = Indexing.buildNewsIndex();
+//						Path artIndex = Paths.get("./indexes/article_index");
 						User user = Indexing.buildUserIndex(txtuser);
 						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 						user.setRankingArticle(Querying.makeQuery(user.getUser_index_path(), artIndex));
 						analyzer.close();
-						Details.dettails(user);
+						GuiUtils.printUserDetails(user);
 					} catch (IOException e2) {
-						// TODO Auto-generated catch block
 						e2.printStackTrace();
 					} catch (TwitterException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 						

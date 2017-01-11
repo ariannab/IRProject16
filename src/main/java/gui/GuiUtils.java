@@ -2,30 +2,19 @@ package gui;
 
 import java.awt.EventQueue;
 import java.io.IOException;
-import java.nio.file.Path;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import org.apache.lucene.analysis.custom.CustomAnalyzer;
-
-import analyzers.CustomAnalyzerFactory;
-import analyzers.Indexing;
-import analyzers.Querying;
 import model.User;
 import twitter4j.TwitterException;
 
-import java.awt.BorderLayout;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
 import java.awt.Font;
-import java.awt.LayoutManager;
-
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 
-public class Details {
+public class GuiUtils {
 	static String txtUser;
 	private JFrame frame;
 	private JPanel panel;
@@ -47,11 +36,11 @@ public class Details {
 	 * @throws IOException 
 	 * @throws TwitterException 
 	 */
-	public static void dettails(final User user) throws IOException, TwitterException {
+	public static void printUserDetails(final User user) throws IOException, TwitterException {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				txtUser = user.getName();
-				Details window = new Details();
+				GuiUtils window = new GuiUtils();
 				window.frame.setVisible(true);
 				
 					System.out.println("-------------------");
@@ -64,16 +53,14 @@ public class Details {
 						window.textArea.append(i + ") " + article + "\n");
 						i++;
 					}
-					//-----Timeline User
+					// User Timeline
 					window.textArea_1.append(user.getTimelineUser());
 					window.txtUsername_1.setText(user.getName() + window.txtUsername_1.getText());
-					// Timeline Friends
+					// User's Friends Timeline
 					for(String status : user.getTimelineFriends() ){
 						window.textArea_2.append(status);
 					}
-					window.txtUsername_2.setText(user.getName() + window.txtUsername_2.getText());
-
-					
+					window.txtUsername_2.setText(user.getName() + window.txtUsername_2.getText());			
 
 			}
 			
@@ -84,7 +71,7 @@ public class Details {
 	/**
 	 * Create the application.
 	 */
-	public Details() {
+	public GuiUtils() {
 		System.out.println("Entro inizalizzazione");
 		initialize();
 	}
@@ -150,11 +137,5 @@ public class Details {
 				
 		textArea_2 = new JTextArea();
 		scrollPane_2.setViewportView(textArea_2);
-
-		
-		
-		
-		
-
 	}
 }

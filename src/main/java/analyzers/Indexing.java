@@ -92,24 +92,7 @@ public class Indexing {
 		return article;
 		
 	}
-	
-
-	public static void main() throws TwitterException, IOException{
-		System.out.println("\nBuilding news index...");
-		Path artIndex = buildNewsIndex();
-//		Path artIndex = Paths.get("./indexes/article_index");
 		
-		System.out.println("\nBuilding user index...");
-		//Path userIndex = buildUserIndex();	
-		Path userIndex = Paths.get("./indexes/profile_index");
-		
-		System.out.println("\n\nNow querying!");
-
-		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
-		Querying.makeQuery(userIndex, artIndex);		
-		analyzer.close();
-	}
-	
 	/**
 	 * Build the complete user index
 	 * 
@@ -174,7 +157,7 @@ public class Indexing {
 	 * @return the path where the index is stored
 	 * @throws IOException
 	 */
-	private static Path buildNewsIndex() throws IOException {
+	public static Path buildNewsIndex() throws IOException {
 		Path artIndex = new File("./indexes/article_index").toPath();
 		Directory dir = FSDirectory.open(artIndex);
 		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
@@ -209,6 +192,7 @@ public class Indexing {
 		Path artIndex = Paths.get("./indexes/article_index");
 		Path userIndex = Paths.get("./indexes/profile_index");
 		
+		//old calls, now refer to main in GUI
 //		Path artIndex = buildNewsIndex();
 //		Path userIndex = buildUserIndex();	
 		
