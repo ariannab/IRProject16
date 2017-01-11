@@ -32,7 +32,8 @@ public class GuiUtils {
 	private JScrollPane scrollPane_2;
 	private JTextArea textArea_2;
 	/**
-	 * Launch the application.
+	 * Show User details in GUI, as his timeline and his friends'
+	 * 
 	 * @throws IOException 
 	 * @throws TwitterException 
 	 */

@@ -100,8 +100,8 @@ public class Indexing {
 	 * @throws IOException
 	 * @throws TwitterException
 	 */
-	public static User buildUserIndex(String txtUser) throws IOException, TwitterException {
-		User user = new User(txtUser);
+	public static User buildUserIndex(String userName) throws IOException, TwitterException {
+		User user = new User(userName);
 		Path userIndex = new File("./indexes/profile_index").toPath();
 		Directory dir = FSDirectory.open(userIndex);
 		user.setPath(userIndex);
@@ -128,8 +128,6 @@ public class Indexing {
 
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
-		String userName = txtUser;
-		System.out.println("User is: "+userName);
 		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName, 100);
 		user.setTimelineUser(timeline);
 		
@@ -187,18 +185,18 @@ public class Indexing {
 		
 	}
 	
-	public static void main(String args[]) throws TwitterException, IOException{		
-		System.out.println("\nBuilding news index, then user index...");
-		Path artIndex = Paths.get("./indexes/article_index");
-		Path userIndex = Paths.get("./indexes/profile_index");
-		
-		//old calls, now refer to main in GUI
-//		Path artIndex = buildNewsIndex();
-//		Path userIndex = buildUserIndex();	
-		
-		System.out.println("\n\nNow querying!");
-
-		Querying.makeQuery(userIndex, artIndex);	
-	}
+//	public static void main(String args[]) throws TwitterException, IOException{		
+//		System.out.println("\nBuilding news index, then user index...");
+//		Path artIndex = Paths.get("./indexes/article_index");
+//		Path userIndex = Paths.get("./indexes/profile_index");
+//		
+//		//old calls, now refer to main in GUI
+////		Path artIndex = buildNewsIndex();
+////		Path userIndex = buildUserIndex();	
+//		
+//		System.out.println("\n\nNow querying!");
+//
+//		Querying.makeQuery(userIndex, artIndex);	
+//	}
 
 }
