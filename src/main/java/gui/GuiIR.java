@@ -10,7 +10,6 @@ import analyzers.Querying;
 import model.User;
 import twitter4j.TwitterException;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 
 import java.util.ArrayList;
@@ -20,16 +19,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.AbstractListModel;
-import java.awt.Color;
-import javax.swing.border.LineBorder;
-
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 
 import javax.swing.JTextField;
@@ -54,11 +46,10 @@ public class GuiIR {
 			public void run() {
 				try {
 					GuiIR window = new GuiIR();
-					window.frameMain.setVisible(true);
+					GuiIR.frameMain.setVisible(true);
 					users = new ArrayList<String>();
 					users = utils.TwitterBootUtils.loadUsernames();
-					DefaultListModel dlm = new DefaultListModel();
-					System.out.println("Entra");
+					System.out.println("Entered GUI");
 					for(String user : users){
 						listUsers.add(user);
 					}
@@ -122,7 +113,7 @@ public class GuiIR {
 		btnSearchNews.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(listUsers.getSelectedIndex());
+				System.out.println("Selected: "+listUsers.getSelectedIndex());
 				if(listUsers.getSelectedIndex()== -1){
 					JOptionPane.showMessageDialog(frameMain,
 						    "Select an user",
