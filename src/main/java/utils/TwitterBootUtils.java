@@ -2,10 +2,13 @@ package utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+
+import model.User;
 import twitter4j.IDs;
 import twitter4j.Paging;
 import twitter4j.Status;
@@ -26,19 +29,20 @@ public class TwitterBootUtils {
 		return list;
 	}
 	
-	public static String loadUsernames() throws FileNotFoundException {
+	public static List loadUsernames() throws FileNotFoundException {
 		// TODO this method will retrieve 10 usernames from the file,
 		// for now it is just one (the first)
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		File file = new File(classloader.getResource("usernames.txt").getFile());
-
+		
 		List<String> list = new ArrayList<String>();
 		Scanner s = new Scanner(file);
-		if (s.hasNextLine())
+		while (s.hasNextLine())
 			list.add(s.nextLine());
 
 		s.close();
-		return list.get(0);
+		//System.out.println(list.size());
+		return list;
 	}
 	
 	public static String getStringTimeline(Twitter twitter, String userName, int nTweets) throws TwitterException {
@@ -48,7 +52,7 @@ public class TwitterBootUtils {
 			List<Status> statuses = twitter.getUserTimeline(userName, page);
 			String timeline = "";
 			for (Status status : statuses) {
-				timeline += status.getText() + " ";
+				timeline += status.getText() + " " + "\n\n";
 			}
 			// System.out.println("\n\n"+timeline);
 			return timeline;

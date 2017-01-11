@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -28,6 +30,7 @@ public class Querying {
 	static float uboost = 0.8f;
 	static float fboost = 0.2f;	
 
+
 	/**
 	 * Build and submit a boolean query to the news index. 
 	 * Clauses (OR) are user profile's tags 
@@ -37,11 +40,10 @@ public class Querying {
 	 * @param articlesIndex
 	 * @throws IOException
 	 */
-	public static void makeQuery(Path userIndex, Path articlesIndex) throws IOException {
-//		final long startTime = System.currentTimeMillis();		
-		
+
+	public static List<String> makeQuery(Path userIndex, Path articlesIndex) throws IOException {
 		Directory userDir = FSDirectory.open(userIndex);
-		
+
 		// initialize the index reader
 		DirectoryReader uReader = DirectoryReader.open(userDir);
 
@@ -73,15 +75,16 @@ public class Querying {
 		ScoreDoc[] resultList = topdocs.scoreDocs; 
 		System.out.println("BM25 Similarity results: " + topdocs.totalHits + " - we show top 20");
 		
-		printQueryResult(query, artSearcher, resultList);
+		return printQueryResult(query, artSearcher, resultList);
 
 //		final long endTime = System.currentTimeMillis();
 //		System.out.println("\nTotal execution time: " + (endTime - startTime) );		
 		
 	}
 
-	private static void printQueryResult(BooleanQuery query, IndexSearcher artSearcher, ScoreDoc[] resultList)
+	private static List<String> printQueryResult(BooleanQuery query, IndexSearcher artSearcher, ScoreDoc[] resultList)
 			throws IOException, FileNotFoundException {
+		List<String> articleRanking = new ArrayList<String>();
 		for (int i = 0; i < resultList.length; i++) {
 			Document art = artSearcher.doc(resultList[i].doc);
 			float score = resultList[i].score;
@@ -92,13 +95,18 @@ public class Querying {
 
 			if (art.getField("source") != null) 
 				asource = art.getField("source").stringValue();
+
 			System.out.println("	title #"+(i+1)+": <" + atitle + "> source: <"+asource+"> *** Score: " + score);
-			
+			articleRanking.add("title: <" + atitle + "> source: <"+asource+"> *** Score: " + score + "\n");
+
 			String filename = "explainations/exp_score_"+(i+1)+".txt";
 			PrintWriter out = new PrintWriter(filename);
 			out.println(((artSearcher.explain(query, resultList[i].doc)).toString()));
 			out.close();
 		}
+		
+		return articleRanking;
+
 	}
 
 	/**

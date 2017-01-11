@@ -40,7 +40,7 @@ public class BootTwitter4j {
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
 
-		userName = TwitterBootUtils.loadUsernames();
+		userName = TwitterBootUtils.loadUsernames().get(0).toString();
 		User user1 = new User(userName);
 
 		// System.out.println("Friends of " + userName + " are in total " +

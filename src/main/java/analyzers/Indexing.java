@@ -21,7 +21,9 @@ import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+
 import model.Article;
+import model.User;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -91,6 +93,23 @@ public class Indexing {
 		
 	}
 	
+
+	public static void main() throws TwitterException, IOException{
+		System.out.println("\nBuilding news index...");
+		Path artIndex = buildNewsIndex();
+//		Path artIndex = Paths.get("./indexes/article_index");
+		
+		System.out.println("\nBuilding user index...");
+		//Path userIndex = buildUserIndex();	
+		Path userIndex = Paths.get("./indexes/profile_index");
+		
+		System.out.println("\n\nNow querying!");
+
+		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
+		Querying.makeQuery(userIndex, artIndex);		
+		analyzer.close();
+	}
+	
 	/**
 	 * Build the complete user index
 	 * 
@@ -98,9 +117,12 @@ public class Indexing {
 	 * @throws IOException
 	 * @throws TwitterException
 	 */
-	private static Path buildUserIndex() throws IOException, TwitterException {
+	public static User buildUserIndex(String txtUser) throws IOException, TwitterException {
+		User user = new User(txtUser);
 		Path userIndex = new File("./indexes/profile_index").toPath();
 		Directory dir = FSDirectory.open(userIndex);
+		user.setPath(userIndex);
+		
 
 		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
@@ -123,10 +145,10 @@ public class Indexing {
 
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
-		String userName = TwitterBootUtils.loadUsernames();
-		//we retireve 100 tweets for the user
-		int nTweets = 100;
-		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName, nTweets);
+		String userName = txtUser;
+		System.out.println("User is: "+userName);
+		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName, 100);
+		user.setTimelineUser(timeline);
 		
 		List<Long> friends = TwitterBootUtils.getFollowingList(twitter, userName);
 		friends.retainAll(TwitterBootUtils.getFollowersList(twitter, userName));
@@ -134,6 +156,7 @@ public class Indexing {
 		int totalFriends = friends.size();
 		System.out.println("\nUser is: "+userName+" and has "+totalFriends+" friends");
 		List<String> friendsTimeline = TwitterBootUtils.getFriendsTimeline(twitter, friends);
+		user.setTimelineFriends(friendsTimeline);
 
 
 		Document profile = userDoc(userName, timeline, friendsTimeline, totalFriends);
@@ -141,7 +164,7 @@ public class Indexing {
 		iwriter2.close();
 		analyzer.close();
 		
-		return userIndex;
+		return user;
 		
 	}
 
