@@ -25,8 +25,8 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 
 public class Querying {
-	static float uboost = 0.9f;
-	static float fboost = 0.1f;	
+	static float uboost = 0.8f;
+	static float fboost = 0.2f;	
 
 	/**
 	 * Build and submit a boolean query to the news index. 
@@ -45,6 +45,9 @@ public class Querying {
 		// initialize the index reader
 		DirectoryReader uReader = DirectoryReader.open(userDir);
 
+//		int totFriends = uReader.document(0).getField("friends").numericValue().intValue();
+//		uboost = totFriends*20/100;
+//		fboost = 1;
 		//we stored the term vector during indexing phase,
 		//so we're able to retrieve it now
 		Terms uTermVector = uReader.getTermVector(0, "utags");
