@@ -13,7 +13,7 @@ To make it work, some resources are needed:
   Here you simple put your news API key
   
 3. ``` usernames.txt``` <br />
-  Here you list some twitter usernames (again one-per-line). For now, no matter how many they are: the loader will take just the first.
+  Here you list some twitter usernames (again one-per-line). 
 
 These files must be put in the ```src\main\resources``` directory and are obviously git-ignored.
 
