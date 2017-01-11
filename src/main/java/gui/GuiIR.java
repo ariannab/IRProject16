@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.EventQueue;
 
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -129,15 +130,20 @@ public class GuiIR {
 						    JOptionPane.WARNING_MESSAGE);
 				}
 				else{
+					JOptionPane.showMessageDialog(frameMain,
+						    "Wait few seconds for result",
+						    "Warning",
+						    JOptionPane.WARNING_MESSAGE);
 					String txtuser = listUsers.getSelectedItem().toString();
-					Path artIndex;
 					try {
-						artIndex = artIndex = Indexing.buildNewsIndex();
+						
+						//Path artIndex = artIndex = artIndex = Indexing.buildNewsIndex();
+						Path artIndex = Paths.get("./indexes/article_index");
 						User user = Indexing.buildUserIndex(txtuser);
 						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 						user.setRankingArticle(Querying.makeQuery(user.getUser_index_path(), artIndex, analyzer,user));
 						analyzer.close();
-						Dettails.dettails(user);
+						Details.dettails(user);
 					} catch (IOException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();

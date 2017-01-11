@@ -25,7 +25,7 @@ import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
-import GUI.GuiIR;
+import gui.GuiIR;
 import model.User;
 
 public class Querying {
@@ -63,6 +63,7 @@ public class Querying {
 
 			if (art.getField("source") != null) 
 				asource = art.getField("source").stringValue();
+			
 			articleRanking.add("title: <" + atitle + "> source: <"+asource+"> *** Score: " + score + "\n");
 			System.out.println("	title: <" + atitle + "> source: <"+asource+"> *** Score: " + score);
 		}

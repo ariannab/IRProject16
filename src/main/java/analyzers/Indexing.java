@@ -24,6 +24,8 @@ import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+
+import gui.GuiIR;
 import model.Article;
 import model.RespArticles;
 import model.User;
@@ -33,7 +35,6 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 import utils.NewsBootUtils;
 import utils.TwitterBootUtils;
-import GUI.GuiIR;
 
 public class Indexing {
 

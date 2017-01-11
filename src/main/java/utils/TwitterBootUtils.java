@@ -2,9 +2,11 @@ package utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 
 import model.User;
 import twitter4j.IDs;
@@ -32,7 +34,7 @@ public class TwitterBootUtils {
 		// for now it is just one
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		File file = new File(classloader.getResource("usernames.txt").getFile());
-
+		
 		List<String> list = new ArrayList<String>();
 		Scanner s = new Scanner(file);
 		while (s.hasNextLine())
