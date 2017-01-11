@@ -41,9 +41,11 @@ public class TwitterBootUtils {
 		return list.get(0);
 	}
 	
-	public static String getStringTimeline(Twitter twitter, String userName) throws TwitterException {
+	public static String getStringTimeline(Twitter twitter, String userName, int nTweets) throws TwitterException {
+		Paging page = new Paging (1, nTweets);
+		
 		try {
-			List<Status> statuses = twitter.getUserTimeline(userName, new Paging());
+			List<Status> statuses = twitter.getUserTimeline(userName, page);
 			String timeline = "";
 			for (Status status : statuses) {
 				timeline += status.getText() + " ";
@@ -121,11 +123,13 @@ public class TwitterBootUtils {
 	
 
 	public static List<String> getFriendsTimeline(Twitter twitter, List<Long> friends) throws TwitterException {
+		//we retrieve the default number of tweets (20) for friends
+		int nTweets = 20;
 		String timeline;
 		List<String> friendsTimeline = new ArrayList<String>();
 		for (Long friend : friends) {
 			timeline = "";
-			timeline = TwitterBootUtils.getStringTimeline(twitter, twitter.showUser(friend).getScreenName());
+			timeline = TwitterBootUtils.getStringTimeline(twitter, twitter.showUser(friend).getScreenName(), nTweets);
 			if (timeline != "") {
 				friendsTimeline.add(timeline);
 			}

@@ -48,7 +48,7 @@ public class BootTwitter4j {
 		// System.out.println("\nAnd his timeline is...\n");
 		// printTimeline(twitter, userName);
 
-		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName);
+		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName, 100);
 
 		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 		try {

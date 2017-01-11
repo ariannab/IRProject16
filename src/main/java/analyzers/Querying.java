@@ -25,8 +25,8 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 
 public class Querying {
-	static float uboost = 0.8f;
-	static float fboost = 0.2f;	
+	static float uboost = 0.9f;
+	static float fboost = 0.1f;	
 
 	/**
 	 * Build and submit a boolean query to the news index. 
@@ -44,19 +44,20 @@ public class Querying {
 		
 		// initialize the index reader
 		DirectoryReader uReader = DirectoryReader.open(userDir);
-		BooleanQuery.setMaxClauseCount(100000);
-		Builder qBuilder = new BooleanQuery.Builder();		
 
 		//we stored the term vector during indexing phase,
 		//so we're able to retrieve it now
 		Terms uTermVector = uReader.getTermVector(0, "utags");
-		TermsEnum termIt = uTermVector.iterator();
-		qBuilder = addTokensInQuery(termIt, qBuilder, uboost);
-		
 		Terms fTermVector = uReader.getTermVector(0, "ftags");
-		termIt = fTermVector.iterator();
-		qBuilder = addTokensInQuery(termIt, qBuilder, fboost);
-		
+		int clauseCount = (int) (uTermVector.size()+fTermVector.size());
+
+		BooleanQuery.setMaxClauseCount(clauseCount);
+		Builder qBuilder = new BooleanQuery.Builder();	
+
+		TermsEnum termIt = uTermVector.iterator();	
+		qBuilder = addTokensInQuery(termIt, qBuilder, uboost);	
+		termIt = fTermVector.iterator();		
+		qBuilder = addTokensInQuery(termIt, qBuilder, fboost);	
 		BooleanQuery query = qBuilder.build();		
 		
 		Directory newsDir = FSDirectory.open(articlesIndex);

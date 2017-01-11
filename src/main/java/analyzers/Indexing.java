@@ -3,6 +3,7 @@ package analyzers;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
@@ -123,7 +124,9 @@ public class Indexing {
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
 		String userName = TwitterBootUtils.loadUsernames();
-		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName);
+		//we retireve 100 tweets for the user
+		int nTweets = 100;
+		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName, nTweets);
 		
 		List<Long> friends = TwitterBootUtils.getFollowingList(twitter, userName);
 		friends.retainAll(TwitterBootUtils.getFollowersList(twitter, userName));
@@ -180,11 +183,11 @@ public class Indexing {
 	
 	public static void main(String args[]) throws TwitterException, IOException{		
 		System.out.println("\nBuilding news index, then user index...");
-//		Path artIndex = Paths.get("./indexes/article_index");
-//		Path userIndex = Paths.get("./indexes/profile_index");
+		Path artIndex = Paths.get("./indexes/article_index");
+		Path userIndex = Paths.get("./indexes/profile_index");
 		
-		Path artIndex = buildNewsIndex();
-		Path userIndex = buildUserIndex();	
+//		Path artIndex = buildNewsIndex();
+//		Path userIndex = buildUserIndex();	
 		
 		System.out.println("\n\nNow querying!");
 
