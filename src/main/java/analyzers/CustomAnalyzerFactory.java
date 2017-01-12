@@ -7,7 +7,7 @@ import org.apache.lucene.analysis.custom.CustomAnalyzer;
 public class CustomAnalyzerFactory {
 
 	/**
-	 * This custom analyzer for tweets eliminates URLs via pattern replace,
+	 * This custom analyzer eliminates URLs via pattern replace,
 	 * uses a lowercase tokenizer, removes stopwords listed in the .txt,
 	 * then add some other filters (as stemming and length)
 	 * 
@@ -29,14 +29,4 @@ public class CustomAnalyzerFactory {
 		return analyzer;
 	}
 
-//	public static CustomAnalyzer buildNewsAnalyzer() throws IOException {
-//		CustomAnalyzer analyzer = CustomAnalyzer.builder()
-//				.withTokenizer("lowercase").addTokenFilter("length", "min", "3", "max", "100")
-//				.addTokenFilter("stop", "words",
-//						"mysql_stopwords.txt", "format",
-//						"wordset")
-//				.addTokenFilter("porterstem")
-//				.build();
-//		return analyzer;
-//	}
 }

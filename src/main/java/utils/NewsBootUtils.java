@@ -34,13 +34,11 @@ public class NewsBootUtils {
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			StringBuffer response = obtainResponse(con);
 			String prettyJsonString = formatJson(response.toString());
-			// System.out.println(prettyJsonString);
 			Set<String> sourceIDs = new HashSet<String>();
 			RespSources resp = buildSourcePOJO(prettyJsonString);
 			for (Source s : resp.getSources()) {
 				String id = s.getId();
 				sourceIDs.add(id);
-				// System.out.println("Source id: "+id);
 			}
 			return sourceIDs;
 		} else {
@@ -97,12 +95,10 @@ public class NewsBootUtils {
 	public static Set<Article> getAllArticlesFromSource(String sourceID, int j) throws MalformedURLException, IOException, ProtocolException {
 		String YOUR_APIKEY = NewsBootUtils.loadAPIKey();
 		
-//		System.out.println("\n\n--------------------- Source "+j+": "+sourceID+" -------------------------");
 		URL obj = new URL("https://newsapi.org/v1/articles?source="+sourceID+"&apiKey="+YOUR_APIKEY);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
 		int responseCode = con.getResponseCode();
-//		System.out.println("GET Response Code :: " + responseCode);
 		
 		if (responseCode == HttpURLConnection.HTTP_OK) { 
 			// success

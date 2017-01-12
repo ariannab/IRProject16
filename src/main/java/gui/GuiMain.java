@@ -38,6 +38,7 @@ public class GuiMain {
 
 	/**
 	 * Launch the application.
+	 * 
 	 * @throws IOException 
 	 * @throws TwitterException 
 	 */

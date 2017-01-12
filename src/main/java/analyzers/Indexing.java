@@ -59,11 +59,9 @@ public class Indexing {
 		FieldType myFieldType = new FieldType(TextField.TYPE_STORED);
 		//we need to store the term vectors if we want the term frequency in the user document
 		myFieldType.setStoreTermVectors(true);		
-		Field utags = new Field("utags", timeline, myFieldType);		
-//		TextField utags = new TextField("utags", timeline, Field.Store.YES);
+		Field utags = new Field("utags", timeline, myFieldType);	
 		profile.add(utags);
-		
-//		TextField ftags = new TextField("ftags", friendsTimeline.toString(), Field.Store.YES);		
+				
 		Field ftags = new Field("ftags", friendsTimeline.toString(), myFieldType);
 		profile.add(ftags);
 		
@@ -187,10 +185,6 @@ public class Indexing {
 		System.out.println("\nBuilding news index, then user index...");
 		Path artIndex = Paths.get("./indexes/article_index");
 		Path userIndex = Paths.get("./indexes/profile_index");
-		
-		//old calls, now refer to main in GUI
-//		Path artIndex = buildNewsIndex();
-//		Path userIndex = buildUserIndex();	
 		
 		System.out.println("\n\nNow querying!");
 

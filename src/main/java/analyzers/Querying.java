@@ -48,6 +48,8 @@ public class Querying {
 		// so we're able to retrieve it now
 		Terms uTermVector = uReader.getTermVector(0, "utags");
 		Terms fTermVector = uReader.getTermVector(0, "ftags");
+		
+		//start to build the boolean query
 		int clauseCount = (int) (uTermVector.size()+fTermVector.size());		
 		BooleanQuery.setMaxClauseCount(clauseCount);
 		Builder qBuilder = new BooleanQuery.Builder();	
@@ -114,8 +116,7 @@ public class Querying {
 	 * @return the updated query builder
 	 * @throws IOException
 	 */
-	private static Builder addTokensInQuery(Terms termV, Builder qBuilder, float boost) throws IOException {
-		
+	private static Builder addTokensInQuery(Terms termV, Builder qBuilder, float boost) throws IOException {		
 		BytesRef t;
 		TermsEnum termIt = termV.iterator();
 		while((t = termIt.next()) != null){
@@ -126,8 +127,7 @@ public class Querying {
 			
 			Query qTerm = new TermQuery(new Term("atags", termString));
 			BoostQuery boostQ = new BoostQuery(qTerm, finalBoost);				
-			qBuilder.add(boostQ, BooleanClause.Occur.SHOULD);
-			
+			qBuilder.add(boostQ, BooleanClause.Occur.SHOULD);			
 		}
 		
 		return qBuilder;
