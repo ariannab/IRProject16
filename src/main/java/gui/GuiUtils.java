@@ -44,8 +44,8 @@ public class GuiUtils {
 				GuiUtils window = new GuiUtils();
 				window.frame.setVisible(true);
 				
-					System.out.println("-------------------");
-					System.out.println(user.getTimelineUser());
+//					System.out.println("-------------------");
+//					System.out.println(user.getTimelineUser());
 					//TimelineUser.timelineuser(user);
 					//timelineFriends.timelineFriends(user);
 					window.txtUsername.setText(user.getName() + "'s suggested news:");

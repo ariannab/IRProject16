@@ -83,8 +83,6 @@ public class GuiMain {
 		lblNewLabel_listOfUsers.setBounds(46, 38, 131, 22);
 		frameMain.getContentPane().add(lblNewLabel_listOfUsers);
 		
-		
-		
 		listUsers = new java.awt.List();
 		listUsers.setBounds(46, 88, 179, 171);
 		frameMain.getContentPane().add(listUsers);
@@ -126,10 +124,9 @@ public class GuiMain {
 						    "Warning",
 						    JOptionPane.WARNING_MESSAGE);
 					String txtuser = listUsers.getSelectedItem().toString();
-					try {
-						
-						Path artIndex = Indexing.buildNewsIndex();
-//						Path artIndex = Paths.get("./indexes/article_index");
+					try {						
+//						Path artIndex = Indexing.buildNewsIndex();
+						Path artIndex = Paths.get("./indexes/article_index");
 						User user = Indexing.buildUserIndex(txtuser);
 						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 						user.setRankingArticle(Querying.makeQuery(user.getUser_index_path(), artIndex));

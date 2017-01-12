@@ -103,9 +103,7 @@ public class Indexing {
 	public static User buildUserIndex(String userName) throws IOException, TwitterException {
 		User user = new User(userName);
 		Path userIndex = new File("./indexes/profile_index").toPath();
-		Directory dir = FSDirectory.open(userIndex);
-		user.setPath(userIndex);
-		
+		Directory dir = FSDirectory.open(userIndex);		
 
 		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
@@ -113,7 +111,7 @@ public class Indexing {
 		config.setSimilarity(similarity);
 		config.setOpenMode(OpenMode.CREATE);
 		
-		IndexWriter iwriter2 = new IndexWriter(dir, config);
+		IndexWriter iwriter = new IndexWriter(dir, config);
 		
 		//retrieving and indexing one user
 		List<String> list = TwitterBootUtils.loadKeys();
@@ -129,7 +127,6 @@ public class Indexing {
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
 		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName, 100);
-		user.setTimelineUser(timeline);
 		
 		List<Long> friends = TwitterBootUtils.getFollowingList(twitter, userName);
 		friends.retainAll(TwitterBootUtils.getFollowersList(twitter, userName));
@@ -137,14 +134,15 @@ public class Indexing {
 		int totalFriends = friends.size();
 		System.out.println("\nUser is: "+userName+" and has "+totalFriends+" friends");
 		List<String> friendsTimeline = TwitterBootUtils.getFriendsTimeline(twitter, friends);
-		user.setTimelineFriends(friendsTimeline);
-
 
 		Document profile = userDoc(userName, timeline, friendsTimeline, totalFriends);
-		iwriter2.addDocument(profile);
-		iwriter2.close();
+		iwriter.addDocument(profile);
+		iwriter.close();
 		analyzer.close();
-		
+
+		user.setPath(userIndex);
+		user.setTimelineUser(timeline);
+		user.setTimelineFriends(friendsTimeline);
 		return user;
 		
 	}
@@ -164,7 +162,7 @@ public class Indexing {
 		config.setSimilarity(similarity);
 		config.setOpenMode(OpenMode.CREATE);
 		
-		IndexWriter iwriter1 = new IndexWriter(dir, config);
+		IndexWriter iwriter = new IndexWriter(dir, config);
 		
 		//retrieving and indexing one article
 		Set<String> enSourcesIDs = NewsBootUtils.getSourcesIDs();
@@ -175,28 +173,28 @@ public class Indexing {
 			articles = NewsBootUtils.getAllArticlesFromSource(id, i);
 			for(Article a : articles){
 				Document article = articleDoc(a.getTitle(), a.getDescription(), id);	
-				iwriter1.addDocument(article);
+				iwriter.addDocument(article);
 			}
 		}
-		iwriter1.close();
+		iwriter.close();
 		analyzer.close();
 		
 		return artIndex;
 		
 	}
 	
-//	public static void main(String args[]) throws TwitterException, IOException{		
-//		System.out.println("\nBuilding news index, then user index...");
-//		Path artIndex = Paths.get("./indexes/article_index");
-//		Path userIndex = Paths.get("./indexes/profile_index");
-//		
-//		//old calls, now refer to main in GUI
-////		Path artIndex = buildNewsIndex();
-////		Path userIndex = buildUserIndex();	
-//		
-//		System.out.println("\n\nNow querying!");
-//
-//		Querying.makeQuery(userIndex, artIndex);	
-//	}
+	public static void main(String args[]) throws TwitterException, IOException{		
+		System.out.println("\nBuilding news index, then user index...");
+		Path artIndex = Paths.get("./indexes/article_index");
+		Path userIndex = Paths.get("./indexes/profile_index");
+		
+		//old calls, now refer to main in GUI
+//		Path artIndex = buildNewsIndex();
+//		Path userIndex = buildUserIndex();	
+		
+		System.out.println("\n\nNow querying!");
+
+		Querying.makeQuery(userIndex, artIndex);	
+	}
 
 }

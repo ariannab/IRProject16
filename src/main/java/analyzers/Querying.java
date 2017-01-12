@@ -27,9 +27,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 
 public class Querying {
-	static float uboost = 0.8f;
-	static float fboost = 0.2f;	
-
 
 	/**
 	 * Build and submit a boolean query to the news index. 
@@ -47,22 +44,16 @@ public class Querying {
 		// initialize the index reader
 		DirectoryReader uReader = DirectoryReader.open(userDir);
 
-//		int totFriends = uReader.document(0).getField("friends").numericValue().intValue();
-//		uboost = totFriends*20/100;
-//		fboost = 1;
-		//we stored the term vector during indexing phase,
-		//so we're able to retrieve it now
+		// we stored the term vector during indexing phase,
+		// so we're able to retrieve it now
 		Terms uTermVector = uReader.getTermVector(0, "utags");
 		Terms fTermVector = uReader.getTermVector(0, "ftags");
-		int clauseCount = (int) (uTermVector.size()+fTermVector.size());
-
+		int clauseCount = (int) (uTermVector.size()+fTermVector.size());		
 		BooleanQuery.setMaxClauseCount(clauseCount);
 		Builder qBuilder = new BooleanQuery.Builder();	
-
-		TermsEnum termIt = uTermVector.iterator();	
-		qBuilder = addTokensInQuery(termIt, qBuilder, uboost);	
-		termIt = fTermVector.iterator();		
-		qBuilder = addTokensInQuery(termIt, qBuilder, fboost);	
+		
+		qBuilder = addTokensInQuery(uTermVector, qBuilder, 0.8f);		
+		qBuilder = addTokensInQuery(fTermVector, qBuilder, 0.2f);	
 		BooleanQuery query = qBuilder.build();		
 		
 		Directory newsDir = FSDirectory.open(articlesIndex);
@@ -74,17 +65,22 @@ public class Querying {
 		TopDocs topdocs = artSearcher.search(query, 20);
 		ScoreDoc[] resultList = topdocs.scoreDocs; 
 		System.out.println("BM25 Similarity results: " + topdocs.totalHits + " - we show top 20");
-		
-		return printQueryResult(query, artSearcher, resultList);
 
 //		final long endTime = System.currentTimeMillis();
 //		System.out.println("\nTotal execution time: " + (endTime - startTime) );		
+		
+		List<String> result = printQueryResult(query, artSearcher, resultList);	
+
+		uReader.close();
+		newsReader.close();
+		return result;
+
 		
 	}
 
 	private static List<String> printQueryResult(BooleanQuery query, IndexSearcher artSearcher, ScoreDoc[] resultList)
 			throws IOException, FileNotFoundException {
-		List<String> articleRanking = new ArrayList<String>();
+		List<String> result = new ArrayList<String>();
 		for (int i = 0; i < resultList.length; i++) {
 			Document art = artSearcher.doc(resultList[i].doc);
 			float score = resultList[i].score;
@@ -97,7 +93,7 @@ public class Querying {
 				asource = art.getField("source").stringValue();
 
 			System.out.println("	title #"+(i+1)+": <" + atitle + "> source: <"+asource+"> *** Score: " + score);
-			articleRanking.add("title: <" + atitle + "> source: <"+asource+"> *** Score: " + score + "\n");
+			result.add("title: <" + atitle + "> source: <"+asource+"> *** Score: " + score + "\n");
 
 			String filename = "explainations/exp_score_"+(i+1)+".txt";
 			PrintWriter out = new PrintWriter(filename);
@@ -105,7 +101,7 @@ public class Querying {
 			out.close();
 		}
 		
-		return articleRanking;
+		return result;
 
 	}
 
@@ -118,13 +114,14 @@ public class Querying {
 	 * @return the updated query builder
 	 * @throws IOException
 	 */
-	private static Builder addTokensInQuery(TermsEnum termIt, Builder qBuilder, float boost) throws IOException {
+	private static Builder addTokensInQuery(Terms termV, Builder qBuilder, float boost) throws IOException {
 		
 		BytesRef t;
+		TermsEnum termIt = termV.iterator();
 		while((t = termIt.next()) != null){
-			String termString = t.utf8ToString();
+			String termString = t.utf8ToString();	
 			float freq = termIt.totalTermFreq();
-			//final boost for the term is base boost multiplied by term frequency
+			//final boost for the term is base boost multiplied by term frequency			
 			float finalBoost = boost * freq;
 			
 			Query qTerm = new TermQuery(new Term("atags", termString));
