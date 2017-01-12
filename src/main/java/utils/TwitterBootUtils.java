@@ -51,7 +51,7 @@ public class TwitterBootUtils {
 			}
 			return timeline;
 		} catch (TwitterException e) {
-			e.printStackTrace();
+			//timeline is private, ignore
 		}
 		return "";
 	}

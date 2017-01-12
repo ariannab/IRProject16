@@ -25,16 +25,28 @@ import javax.swing.JOptionPane;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.border.TitledBorder;
+import javax.swing.JTabbedPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import java.awt.Color;
+import java.awt.Window.Type;
+import javax.swing.JPanel;
+import java.awt.FlowLayout;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import java.awt.GridLayout;
 
 public class GuiMain {
 
 	JFrame frameMain;
-	JLabel lblNewLabel_listOfUsers;
 	List<String> users;
 	java.awt.List listUsers;
 	JTextField txtAddUser;
 	JButton btnAddUser;
 	private JButton btnSearchNews;
+	private JPanel panel_1;
 
 	/**
 	 * Launch the application.
@@ -46,6 +58,7 @@ public class GuiMain {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 					GuiMain window = new GuiMain();
 					window.frameMain.setVisible(true);
 					window.users = new ArrayList<String>();
@@ -75,28 +88,48 @@ public class GuiMain {
 	 */
 	private void initialize() {
 		frameMain = new JFrame();
-		frameMain.setBounds(100, 100, 600, 400);
+		frameMain.setFont(new Font("Dialog", Font.BOLD, 16));
+		frameMain.setBackground(Color.LIGHT_GRAY);
+		frameMain.setTitle("News Retriever");
+		frameMain.setBounds(100, 100, 467, 412);
 		frameMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameMain.getContentPane().setLayout(null);
 		
-		lblNewLabel_listOfUsers = new JLabel("List of users");
-		lblNewLabel_listOfUsers.setFont(new Font("Lucida Grande", Font.BOLD, 18));
-		lblNewLabel_listOfUsers.setBounds(46, 38, 131, 22);
-		frameMain.getContentPane().add(lblNewLabel_listOfUsers);
+		btnSearchNews = new JButton("Search News");
+		btnSearchNews.setBounds(251, 168, 161, 32);
+		frameMain.getContentPane().add(btnSearchNews);
+		
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder(null, "Users' List", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.setBounds(6, 168, 224, 199);
+		frameMain.getContentPane().add(panel);
+		panel.setLayout(new GridLayout(0, 1, 0, 0));
+		
 		
 		listUsers = new java.awt.List();
-		listUsers.setBounds(46, 88, 179, 171);
-		frameMain.getContentPane().add(listUsers);
+		panel.add(listUsers);
+		
+		panel_1 = new JPanel();
+		panel_1.setBorder(new TitledBorder(null, "Add Twitter Account", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(59, 59, 59)));
+		panel_1.setBounds(6, 86, 423, 64);
+		frameMain.getContentPane().add(panel_1);
+		panel_1.setLayout(null);
 		
 		txtAddUser = new JTextField();
+		txtAddUser.setBounds(16, 18, 197, 32);
+		panel_1.add(txtAddUser);
 		txtAddUser.setToolTipText("Username");
-		txtAddUser.setBounds(289, 139, 134, 28);
-		frameMain.getContentPane().add(txtAddUser);
 		txtAddUser.setColumns(10);
 		
-		btnAddUser = new JButton("Add user");
-		btnAddUser.setBounds(306, 98, 117, 29);
-		frameMain.getContentPane().add(btnAddUser);
+		btnAddUser = new JButton("Add User");
+		btnAddUser.setBounds(245, 18, 160, 32);
+		panel_1.add(btnAddUser);
+		
+		JLabel lblNewLabel = new JLabel("Choose the user you want to profile...");
+		lblNewLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+		lblNewLabel.setToolTipText("Select a user from \"Users' List\", than click the \"Search News\" button");
+		lblNewLabel.setBounds(17, 28, 337, 28);
+		frameMain.getContentPane().add(lblNewLabel);
 		btnAddUser.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -105,10 +138,6 @@ public class GuiMain {
 				
 			}
 		});
-		
-		btnSearchNews = new JButton("Search News");
-		btnSearchNews.setBounds(449, 98, 117, 29);
-		frameMain.getContentPane().add(btnSearchNews);
 		btnSearchNews.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -121,7 +150,7 @@ public class GuiMain {
 				}
 				else{
 					JOptionPane.showMessageDialog(frameMain,
-						    "Wait few seconds for result",
+						    "Retrieving data: it may take a few seconds",
 						    "Warning",
 						    JOptionPane.WARNING_MESSAGE);
 					String txtuser = listUsers.getSelectedItem().toString();
