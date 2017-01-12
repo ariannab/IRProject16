@@ -15,6 +15,11 @@
   		<artifactId>lucene-analyzers-common</artifactId>
   		<version>6.3.0</version>
   	</dependency>
+	<dependency>
+	    <groupId>org.apache.lucene</groupId>
+	    <artifactId>lucene-misc</artifactId>
+	    <version>6.3.0</version>
+	</dependency>  	
   	<dependency>
   		<groupId>com.google.code.gson</groupId>
   		<artifactId>gson</artifactId>

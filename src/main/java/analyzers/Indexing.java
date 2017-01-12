@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -14,8 +15,11 @@ import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.misc.HighFreqTerms;
+import org.apache.lucene.misc.TermStats;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.Similarity;
@@ -181,14 +185,38 @@ public class Indexing {
 		
 	}
 	
-	public static void main(String args[]) throws TwitterException, IOException{		
+	/**
+	 * Get most frequent tags, of user's timeline or his friends'
+	 * 
+	 * @param userIndex
+	 * @param field (field name is utags for users tags, ftags for friends tags)
+	 * @return list of tags, as Strings
+	 * @throws Exception
+	 */
+	public static List<String> getHighestTags(Path userIndex, String field) throws Exception{
+		Directory userDir = FSDirectory.open(userIndex);
+
+		// initialize the index reader
+		DirectoryReader uReader = DirectoryReader.open(userDir);
+		TermStats[] terms = HighFreqTerms.getHighFreqTerms(uReader, 
+				20, field, new HighFreqTerms.TotalTermFreqComparator());
+		
+		List<String> resultList = new ArrayList<String>();
+		
+		 for (int i = 0; i < terms.length; i++) 
+			  resultList.add(terms[i].termtext.utf8ToString());
+		 
+		 return resultList;
+	}
+	
+	public static void main(String args[]) throws Exception{		
 		System.out.println("\nBuilding news index, then user index...");
 		Path artIndex = Paths.get("./indexes/article_index");
 		Path userIndex = Paths.get("./indexes/profile_index");
 		
 		System.out.println("\n\nNow querying!");
 
-		Querying.makeQuery(userIndex, artIndex);	
+		Querying.makeQuery(userIndex, artIndex);
 	}
 
 }
