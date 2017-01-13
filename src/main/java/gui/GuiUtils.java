@@ -25,12 +25,12 @@ public class GuiUtils {
 	private JPanel panel_1;
 	private JLabel txtUsername_1;
 	private JScrollPane scrollPane_1;
-	private JTextArea textArea_1;
+	private JTextArea userTextArea;
 	//------Friends
 	private JPanel panel_2;
 	private JLabel txtUsername_2;
 	private JScrollPane scrollPane_2;
-	private JTextArea textArea_2;
+	private JTextArea fTextArea;
 	/**
 	 * Show User details in GUI, as his timeline and his friends'
 	 * 
@@ -55,11 +55,20 @@ public class GuiUtils {
 						i++;
 					}
 					// User Timeline
-					window.textArea_1.append(user.getTimelineUser());
+					i = 1;
+					window.userTextArea.append("User's most frequent tags:\n\n");
+					for(String utag : user.getTimelineUser() ){
+						window.userTextArea.append("#"+i+" : "+utag+"\n");
+						i++;
+					}
+//					window.textArea_1.append(user.getTimelineUser());
 					window.txtUsername_1.setText(user.getName() + window.txtUsername_1.getText());
 					// User's Friends Timeline
-					for(String status : user.getTimelineFriends() ){
-						window.textArea_2.append(status);
+					window.fTextArea.append("User's friends most frequent tags:\n\n");
+					i = 1;
+					for(String ftag : user.getTimelineFriends() ){
+						window.fTextArea.append("#"+i+" : "+ftag+"\n");
+						i++;
 					}
 					window.txtUsername_2.setText(user.getName() + window.txtUsername_2.getText());			
 
@@ -119,8 +128,8 @@ public class GuiUtils {
 		scrollPane_1.setBounds(6, 52, 1147, 534);
 		panel_1.add(scrollPane_1);
 		
-		textArea_1 = new JTextArea();
-		scrollPane_1.setViewportView(textArea_1);
+		userTextArea = new JTextArea();
+		scrollPane_1.setViewportView(userTextArea);
 		
 		//------------Timeline Friends
 		panel_2 = new JPanel();
@@ -136,7 +145,7 @@ public class GuiUtils {
 		scrollPane_2.setBounds(6, 52, 1147, 534);
 		panel_2.add(scrollPane_2);
 				
-		textArea_2 = new JTextArea();
-		scrollPane_2.setViewportView(textArea_2);
+		fTextArea = new JTextArea();
+		scrollPane_2.setViewportView(fTextArea);
 	}
 }

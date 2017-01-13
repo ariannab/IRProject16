@@ -9,7 +9,7 @@ import java.util.Set;
 public class User {
 	String name;
 	Path user_index_path;
-	String timelineUser;
+	List<String> timelineUser;
 	List<String> timelineFriends;
 	List<String> rankingArticle;
 	
@@ -20,10 +20,10 @@ public class User {
 	public void setTimelineFriends(List<String> timelineFriends) {
 		this.timelineFriends = timelineFriends;
 	}
-	public String getTimelineUser() {
+	public List<String> getTimelineUser() {
 		return timelineUser;
 	}
-	public void setTimelineUser(String timelineUser) {
+	public void setTimelineUser(List<String> timelineUser) {
 		this.timelineUser = timelineUser;
 	}
 	public User(String name) {

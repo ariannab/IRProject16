@@ -4,9 +4,6 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
-import analyzers.CustomAnalyzerFactory;
-import analyzers.Indexing;
-import analyzers.Querying;
 import model.User;
 import twitter4j.TwitterException;
 
@@ -23,6 +20,10 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JOptionPane;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
+
+import analysis.CustomAnalyzerFactory;
+import analysis.Indexing;
+import analysis.Querying;
 
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -153,11 +154,17 @@ public class GuiMain {
 						    "Retrieving data: it may take a few seconds",
 						    "Warning",
 						    JOptionPane.WARNING_MESSAGE);
-					String txtuser = listUsers.getSelectedItem().toString();
+					String txtUser = listUsers.getSelectedItem().toString();
 					try {						
 //						Path artIndex = Indexing.buildNewsIndex();
 						Path artIndex = Paths.get("./indexes/article_index");
-						User user = Indexing.buildUserIndex(txtuser);
+//						User user = Indexing.buildUserIndex(txtuser);
+						User user = null;
+						try {
+							user = Indexing.readUserIndex(txtUser);
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
 						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 						user.setRankingArticle(Querying.makeQuery(user.getUser_index_path(), artIndex));
 						analyzer.close();

@@ -1,4 +1,4 @@
-package analyzers;
+package analysis;
 
 import java.io.IOException;
 

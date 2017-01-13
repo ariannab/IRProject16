@@ -1,4 +1,4 @@
-package analyzers;
+package analysis;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,7 +104,7 @@ public class Indexing {
 	 */
 	public static User buildUserIndex(String userName) throws IOException, TwitterException {
 		User user = new User(userName);
-		Path userIndex = new File("./indexes/profile_index").toPath();
+		Path userIndex = new File("./indexes/profiles/"+userName).toPath();
 		Directory dir = FSDirectory.open(userIndex);		
 
 		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
@@ -143,7 +143,9 @@ public class Indexing {
 		analyzer.close();
 
 		user.setPath(userIndex);
-		user.setTimelineUser(timeline);
+		ArrayList<String> list_timeline = new ArrayList<String>();
+		list_timeline.add(timeline);
+		user.setTimelineUser(list_timeline);
 		user.setTimelineFriends(friendsTimeline);
 		return user;
 		
@@ -217,6 +219,19 @@ public class Indexing {
 		System.out.println("\n\nNow querying!");
 
 		Querying.makeQuery(userIndex, artIndex);
+	}
+
+
+	public static User readUserIndex(String userName) throws Exception {
+		Path userIndex = new File("./indexes/profiles/"+userName).toPath();
+		List<String> timeline = getHighestTags(userIndex, "utags");
+		List<String> friendsTimeline = getHighestTags(userIndex, "ftags");
+		
+		User user = new User(userName);
+		user.setPath(userIndex);
+		user.setTimelineUser(timeline);
+		user.setTimelineFriends(friendsTimeline);
+		return user;
 	}
 
 }
