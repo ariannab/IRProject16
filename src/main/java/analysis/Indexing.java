@@ -211,6 +211,25 @@ public class Indexing {
 		 return resultList;
 	}
 	
+	/**
+	 * Get highest frequency (referred to field). Utility for normalization of frequencies
+	 * 
+	 * @param userIndex
+	 * @param field
+	 * @return the highest frequency for terms in field
+	 * @throws Exception
+	 */
+	public static int getHighestFreq(Path userIndex, String field) throws Exception{
+		Directory userDir = FSDirectory.open(userIndex);
+
+		// initialize the index reader
+		DirectoryReader uReader = DirectoryReader.open(userDir);
+		TermStats[] terms = HighFreqTerms.getHighFreqTerms(uReader, 
+				1, field, new HighFreqTerms.TotalTermFreqComparator());
+		
+		 return (int) terms[0].totalTermFreq;
+	}
+	
 	public static void main(String args[]) throws Exception{		
 		System.out.println("\nBuilding news index, then user index...");
 		Path artIndex = Paths.get("./indexes/article_index");

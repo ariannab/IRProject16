@@ -82,7 +82,7 @@ public class GuiUtils {
 	 * Create the application.
 	 */
 	public GuiUtils() {
-		System.out.println("Entro inizalizzazione");
+		System.out.println("Enter initialization");
 		initialize();
 	}
 

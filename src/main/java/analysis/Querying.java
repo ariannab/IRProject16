@@ -28,6 +28,9 @@ import org.apache.lucene.util.BytesRef;
 
 public class Querying {
 
+	static int maxUserFreq;
+	static int maxFFreq;
+	
 	/**
 	 * Build and submit a boolean query to the news index. 
 	 * Clauses (OR) are user profile's tags 
@@ -35,10 +38,10 @@ public class Querying {
 	 * 
 	 * @param userIndex
 	 * @param articlesIndex
-	 * @throws IOException
+	 * @throws Exception 
 	 */
 
-	public static List<String> makeQuery(Path userIndex, Path articlesIndex) throws IOException {
+	public static List<String> makeQuery(Path userIndex, Path articlesIndex) throws Exception {
 		Directory userDir = FSDirectory.open(userIndex);
 
 		// initialize the index reader
@@ -54,8 +57,11 @@ public class Querying {
 		BooleanQuery.setMaxClauseCount(clauseCount);
 		Builder qBuilder = new BooleanQuery.Builder();	
 		
-		qBuilder = addTokensInQuery(uTermVector, qBuilder, 0.8f);		
-		qBuilder = addTokensInQuery(fTermVector, qBuilder, 0.2f);	
+		maxUserFreq = Indexing.getHighestFreq(userIndex, "utags");
+		maxFFreq = Indexing.getHighestFreq(userIndex, "ftags");
+		
+		qBuilder = addTokensInQuery(uTermVector, qBuilder, true);		
+		qBuilder = addTokensInQuery(fTermVector, qBuilder, false);	
 		BooleanQuery query = qBuilder.build();		
 		
 		Directory newsDir = FSDirectory.open(articlesIndex);
@@ -116,12 +122,27 @@ public class Querying {
 	 * @return the updated query builder
 	 * @throws IOException
 	 */
-	private static Builder addTokensInQuery(Terms termV, Builder qBuilder, float boost) throws IOException {		
+	private static Builder addTokensInQuery(Terms termV, Builder qBuilder, boolean mustBoost) throws IOException {		
 		BytesRef t;
 		TermsEnum termIt = termV.iterator();
+		float freq;
+		float boost;
+		float factor;
+		if(mustBoost) {
+			boost = 1.1f;
+			factor = maxUserFreq;
+		}
+		else {
+			factor = maxFFreq;
+			boost = 1;
+		}
+		
 		while((t = termIt.next()) != null){
-			String termString = t.utf8ToString();	
-			float freq = termIt.totalTermFreq();
+			String termString = t.utf8ToString();
+			
+			//normalization of frequencies (values in 0-1)
+			freq = termIt.totalTermFreq()/factor;
+			
 			//final boost for the term is base boost multiplied by term frequency			
 			float finalBoost = boost * freq;
 			

@@ -158,15 +158,19 @@ public class GuiMain {
 					try {						
 //						Path artIndex = Indexing.buildNewsIndex();
 						Path artIndex = Paths.get("./indexes/article_index");
-//						User user = Indexing.buildUserIndex(txtuser);
+//						User user = Indexing.buildUserIndex(txtUser);
 						User user = null;
 						try {
 							user = Indexing.readUserIndex(txtUser);
 						} catch (Exception e1) {
-							e1.printStackTrace();
+							//TODO we don't have this user locally, retrieve him
 						}
 						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
-						user.setRankingArticle(Querying.makeQuery(user.getUser_index_path(), artIndex));
+						try {
+							user.setRankingArticle(Querying.makeQuery(user.getUser_index_path(), artIndex));
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
 						analyzer.close();
 						GuiUtils.printUserDetails(user);
 					} catch (IOException e2) {
