@@ -67,8 +67,7 @@ public class GuiMain {
 					System.out.println("Entered GUI");
 					for(String user : window.users){
 						window.listUsers.add(user);
-					}
-					
+					}					
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -163,8 +162,13 @@ public class GuiMain {
 						try {
 							user = Indexing.readUserIndex(txtUser);
 						} catch (Exception e1) {
-							//TODO we don't have this user locally, retrieve him
+							try {
+								user = Indexing.buildUserIndex(txtUser);
+							} catch (Exception e2) {
+								e2.printStackTrace();
+							}
 						}
+						
 						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 						try {
 							user.setRankingArticle(Querying.makeQuery(user.getUser_index_path(), artIndex));
@@ -177,12 +181,9 @@ public class GuiMain {
 						e2.printStackTrace();
 					} catch (TwitterException e1) {
 						e1.printStackTrace();
-					}
-						
-					
+					}					
 				}
 			}
-		});
-		
+		});		
 	}
 }

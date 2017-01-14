@@ -99,10 +99,9 @@ public class Indexing {
 	 * Build the complete user index
 	 * 
 	 * @return the path where the index is stored
-	 * @throws IOException
-	 * @throws TwitterException
+	 * @throws Exception 
 	 */
-	public static User buildUserIndex(String userName) throws IOException, TwitterException {
+	public static User buildUserIndex(String userName) throws Exception {
 		User user = new User(userName);
 		Path userIndex = new File("./indexes/profiles/"+userName).toPath();
 		Directory dir = FSDirectory.open(userIndex);		
@@ -143,10 +142,12 @@ public class Indexing {
 		analyzer.close();
 
 		user.setPath(userIndex);
-		ArrayList<String> list_timeline = new ArrayList<String>();
-		list_timeline.add(timeline);
-		user.setTimelineUser(list_timeline);
-		user.setTimelineFriends(friendsTimeline);
+
+		List<String> tagsTimeline = getHighestTags(userIndex, "utags");
+		List<String> fTagsTimeline = getHighestTags(userIndex, "ftags");
+		
+		user.setTimelineUser(tagsTimeline);
+		user.setTimelineFriends(fTagsTimeline);
 		return user;
 		
 	}
@@ -191,14 +192,13 @@ public class Indexing {
 	 * Get most frequent tags, of user's timeline or his friends'
 	 * 
 	 * @param userIndex
-	 * @param field (field name is utags for users tags, ftags for friends tags)
+	 * @param field (can be utags for users tags, ftags for friends tags)
 	 * @return list of tags, as Strings
 	 * @throws Exception
 	 */
 	public static List<String> getHighestTags(Path userIndex, String field) throws Exception{
 		Directory userDir = FSDirectory.open(userIndex);
 
-		// initialize the index reader
 		DirectoryReader uReader = DirectoryReader.open(userDir);
 		TermStats[] terms = HighFreqTerms.getHighFreqTerms(uReader, 
 				20, field, new HighFreqTerms.TotalTermFreqComparator());
@@ -212,7 +212,8 @@ public class Indexing {
 	}
 	
 	/**
-	 * Get highest frequency (referred to field). Utility for normalization of frequencies
+	 * Get highest frequency (referred to field). 
+	 * Utility for normalization of frequencies
 	 * 
 	 * @param userIndex
 	 * @param field
@@ -222,7 +223,6 @@ public class Indexing {
 	public static int getHighestFreq(Path userIndex, String field) throws Exception{
 		Directory userDir = FSDirectory.open(userIndex);
 
-		// initialize the index reader
 		DirectoryReader uReader = DirectoryReader.open(userDir);
 		TermStats[] terms = HighFreqTerms.getHighFreqTerms(uReader, 
 				1, field, new HighFreqTerms.TotalTermFreqComparator());
@@ -240,7 +240,13 @@ public class Indexing {
 		Querying.makeQuery(userIndex, artIndex);
 	}
 
-
+	/**
+	 * Method to read an already locally stored profile.
+	 * 
+	 * @param userName
+	 * @return the User object holding the retrieved information
+	 * @throws Exception
+	 */
 	public static User readUserIndex(String userName) throws Exception {
 		Path userIndex = new File("./indexes/profiles/"+userName).toPath();
 		List<String> timeline = getHighestTags(userIndex, "utags");

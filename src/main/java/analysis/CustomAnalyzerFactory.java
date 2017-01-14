@@ -9,7 +9,7 @@ public class CustomAnalyzerFactory {
 	/**
 	 * This custom analyzer eliminates URLs via pattern replace,
 	 * uses a lowercase tokenizer, removes stopwords listed in the .txt,
-	 * then add some other filters (as stemming and length)
+	 * then adds some other filters (stemming, length)
 	 * 
 	 * @return the analyzer
 	 * @throws IOException

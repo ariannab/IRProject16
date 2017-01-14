@@ -44,7 +44,6 @@ public class Querying {
 	public static List<String> makeQuery(Path userIndex, Path articlesIndex) throws Exception {
 		Directory userDir = FSDirectory.open(userIndex);
 
-		// initialize the index reader
 		DirectoryReader uReader = DirectoryReader.open(userDir);
 
 		// we stored the term vector during indexing phase,
@@ -52,7 +51,7 @@ public class Querying {
 		Terms uTermVector = uReader.getTermVector(0, "utags");
 		Terms fTermVector = uReader.getTermVector(0, "ftags");
 		
-		//start to build the boolean query
+		//start building the boolean query
 		int clauseCount = (int) (uTermVector.size()+fTermVector.size());		
 		BooleanQuery.setMaxClauseCount(clauseCount);
 		Builder qBuilder = new BooleanQuery.Builder();	
@@ -72,12 +71,12 @@ public class Querying {
 		//submit query to the news index
 		TopDocs topdocs = artSearcher.search(query, 20);
 		ScoreDoc[] resultList = topdocs.scoreDocs; 
-		System.out.println("BM25 Similarity results: " + topdocs.totalHits + " - we show top 20");
+//		System.out.println("BM25 Similarity results: " + topdocs.totalHits + " - we show top 20");
 
 //		final long endTime = System.currentTimeMillis();
 //		System.out.println("\nTotal execution time: " + (endTime - startTime) );		
 		
-		List<String> result = printQueryResult(query, artSearcher, resultList);	
+		List<String> result = getQueryResult(query, artSearcher, resultList);	
 
 		uReader.close();
 		newsReader.close();
@@ -86,7 +85,7 @@ public class Querying {
 		
 	}
 
-	private static List<String> printQueryResult(BooleanQuery query, IndexSearcher artSearcher, ScoreDoc[] resultList)
+	private static List<String> getQueryResult(BooleanQuery query, IndexSearcher artSearcher, ScoreDoc[] resultList)
 			throws IOException, FileNotFoundException {
 		List<String> result = new ArrayList<String>();
 		for (int i = 0; i < resultList.length; i++) {
@@ -100,7 +99,7 @@ public class Querying {
 			if (art.getField("source") != null) 
 				asource = art.getField("source").stringValue();
 
-			System.out.println("	title #"+(i+1)+": <" + atitle + "> source: <"+asource+"> *** Score: " + score);
+//			System.out.println("	title #"+(i+1)+": <" + atitle + "> source: <"+asource+"> *** Score: " + score);
 			result.add("title: <" + atitle + "> source: <"+asource+"> *** Score: " + score + "\n");
 
 			String filename = "explainations/exp_score_"+(i+1)+".txt";
