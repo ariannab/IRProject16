@@ -128,7 +128,7 @@ public class Querying {
 		float boost;
 		float factor;
 		if(mustBoost) {
-			boost = 1.1f;
+			boost = 2f;
 			factor = maxUserFreq;
 		}
 		else {

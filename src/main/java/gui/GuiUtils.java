@@ -54,7 +54,7 @@ public class GuiUtils {
 					window.txtUsername.setText(user.getName() + "'s suggested news:");
 					int i = 1;
 					for(String article : user.getRankingArticle() ){
-						window.textArea.append(i + ") " + article.replaceAll("â€™?‹?", "'") + "\n");
+						window.textArea.append(i + ") " + article.replaceAll("â€™?‹?", "'").replace("Â", "") + "\n");
 						i++;	
 					}
 					window.textArea.setSize(1100, 1000);
