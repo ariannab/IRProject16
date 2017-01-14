@@ -91,17 +91,17 @@ public class GuiMain {
 		frameMain.setFont(new Font("Dialog", Font.BOLD, 16));
 		frameMain.setBackground(Color.LIGHT_GRAY);
 		frameMain.setTitle("News Retriever");
-		frameMain.setBounds(100, 100, 467, 412);
+		frameMain.setBounds(100, 100, 467, 319);
 		frameMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameMain.getContentPane().setLayout(null);
 		
 		btnSearchNews = new JButton("Search News");
-		btnSearchNews.setBounds(251, 168, 161, 32);
+		btnSearchNews.setBounds(264, 86, 161, 32);
 		frameMain.getContentPane().add(btnSearchNews);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Users' List", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(6, 168, 224, 199);
+		panel.setBounds(6, 68, 224, 199);
 		frameMain.getContentPane().add(panel);
 		panel.setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -111,18 +111,18 @@ public class GuiMain {
 		
 		panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Add Twitter Account", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(59, 59, 59)));
-		panel_1.setBounds(6, 86, 423, 64);
+		panel_1.setBounds(244, 130, 201, 137);
 		frameMain.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 		
 		txtAddUser = new JTextField();
-		txtAddUser.setBounds(16, 18, 197, 32);
+		txtAddUser.setBounds(20, 28, 160, 32);
 		panel_1.add(txtAddUser);
 		txtAddUser.setToolTipText("Username");
 		txtAddUser.setColumns(10);
 		
 		btnAddUser = new JButton("Add User");
-		btnAddUser.setBounds(245, 18, 160, 32);
+		btnAddUser.setBounds(20, 78, 160, 32);
 		panel_1.add(btnAddUser);
 		
 		JLabel lblNewLabel = new JLabel("Choose the user you want to profile...");

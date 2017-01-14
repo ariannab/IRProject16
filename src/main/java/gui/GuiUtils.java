@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.EventQueue;
 import java.io.IOException;
+import java.util.regex.Pattern;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -43,6 +45,7 @@ public class GuiUtils {
 				txtUser = user.getName();
 				GuiUtils window = new GuiUtils();
 				window.frame.setVisible(true);
+				window.frame.setLocationRelativeTo(null);
 				
 //					System.out.println("-------------------");
 //					System.out.println(user.getTimelineUser());
@@ -51,25 +54,25 @@ public class GuiUtils {
 					window.txtUsername.setText(user.getName() + "'s suggested news:");
 					int i = 1;
 					for(String article : user.getRankingArticle() ){
-						window.textArea.append(i + ") " + article + "\n");
-						i++;
+						window.textArea.append(i + ") " + article.replaceAll("â€™?‹?", "'") + "\n");
+						i++;	
 					}
-					// User Timeline
+					window.textArea.setSize(1100, 1000);
+					window.textArea.setCaretPosition(0);
 					i = 1;
-					window.userTextArea.append("User's most frequent tags:\n\n");
 					for(String utag : user.getTimelineUser() ){
-						window.userTextArea.append("#"+i+" : "+utag+"\n");
+						window.userTextArea.append("#"+i+" : "+utag+"\n\n");
 						i++;
 					}
+					window.userTextArea.setCaretPosition(0);
 //					window.textArea_1.append(user.getTimelineUser());
 					window.txtUsername_1.setText(user.getName() + window.txtUsername_1.getText());
-					// User's Friends Timeline
-					window.fTextArea.append("User's friends most frequent tags:\n\n");
 					i = 1;
 					for(String ftag : user.getTimelineFriends() ){
-						window.fTextArea.append("#"+i+" : "+ftag+"\n");
+						window.fTextArea.append("#"+i+" : "+ftag+"\n\n");
 						i++;
 					}
+					window.fTextArea.setCaretPosition(0);
 					window.txtUsername_2.setText(user.getName() + window.txtUsername_2.getText());			
 
 			}
@@ -91,7 +94,7 @@ public class GuiUtils {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(500, 500, 1200, 666);
+		frame.setBounds(500, 500, 1200, 670);
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -104,8 +107,8 @@ public class GuiUtils {
 		panel.setLayout(null);
 		
 		txtUsername = new JLabel("");
+		txtUsername.setBounds(38, 18, 457, 23);
 		txtUsername.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		txtUsername.setBounds(38, 18, 273, 23);
 		panel.add(txtUsername);
 		
 		scrollPane = new JScrollPane();
@@ -114,14 +117,18 @@ public class GuiUtils {
 		
 		textArea = new JTextArea();
 		scrollPane.setViewportView(textArea);
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBounds(6, 31, 10, 10);
+		panel.add(panel_3);
 		//------------Timeline User
 		panel_1 = new JPanel();
 		tabbedPane.addTab("User", null, panel_1, null);
 		panel_1.setLayout(null);
 		
-		txtUsername_1 = new JLabel("'s timeline: ");
+		txtUsername_1 = new JLabel("'s most frequent tags:");
 		txtUsername_1.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		txtUsername_1.setBounds(38, 18, 273, 23);
+		txtUsername_1.setBounds(38, 18, 642, 23);
 		panel_1.add(txtUsername_1);
 		
 		scrollPane_1 = new JScrollPane();
@@ -136,9 +143,9 @@ public class GuiUtils {
 		tabbedPane.addTab("Friends", null, panel_2, null);
 		panel_2.setLayout(null);
 				
-		txtUsername_2 = new JLabel("'s friends timeline: ");
+		txtUsername_2 = new JLabel("'s friends most frequent tags:");
 		txtUsername_2.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		txtUsername_2.setBounds(38, 18, 273, 23);
+		txtUsername_2.setBounds(38, 18, 679, 23);
 		panel_2.add(txtUsername_2);
 				
 		scrollPane_2 = new JScrollPane();
