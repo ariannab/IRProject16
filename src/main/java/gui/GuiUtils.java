@@ -67,13 +67,14 @@ public class GuiUtils {
 					StyleConstants.setBold(bold, true);
 					try
 					{
-					    String title = article.getTitle().replaceAll("â€™?‹?", "'").replace("Â", "");
-					    doc.insertString(doc.getLength(), "Title: ",bold );
+					    String title = article.getTitle().replaceAll("&#039;", "'");
+					    doc.insertString(doc.getLength(), i + ")"+" Title: ",bold );
 					    doc.insertString(doc.getLength(), "<"+title+">", null );
 					    doc.insertString(doc.getLength(), " *** Source: ", bold );
 					    doc.insertString(doc.getLength(), "<"+article.getSource()+">", null );
 					    doc.insertString(doc.getLength(), " *** Score: ", bold );
 					    doc.insertString(doc.getLength(), "<"+article.getScore()+">"+"\n\n", null );
+					    i++;
 					}
 					catch(Exception e) { System.out.println(e); }
 					
