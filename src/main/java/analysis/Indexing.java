@@ -143,8 +143,8 @@ public class Indexing {
 
 		user.setPath(userIndex);
 
-		List<String> tagsTimeline = getHighestTags(userIndex, "utags");
-		List<String> fTagsTimeline = getHighestTags(userIndex, "ftags");
+		List<String> tagsTimeline = getHighestTerms(userIndex, "utags", 30);
+		List<String> fTagsTimeline = getHighestTerms(userIndex, "ftags", 30);
 		
 		user.setTimelineUser(tagsTimeline);
 		user.setTimelineFriends(fTagsTimeline);
@@ -191,19 +191,19 @@ public class Indexing {
 	}
 	
 	/**
-	 * Get most frequent tags, of user's timeline or his friends'
+	 * Get most frequent terms, of user's timeline or his friends'
 	 * 
 	 * @param userIndex
 	 * @param field (can be utags for users tags, ftags for friends tags)
 	 * @return list of tags, as Strings
 	 * @throws Exception
 	 */
-	public static List<String> getHighestTags(Path userIndex, String field) throws Exception{
+	public static List<String> getHighestTerms(Path userIndex, String field, int total) throws Exception{
 		Directory userDir = FSDirectory.open(userIndex);
 
 		DirectoryReader uReader = DirectoryReader.open(userDir);
 		TermStats[] terms = HighFreqTerms.getHighFreqTerms(uReader, 
-				20, field, new HighFreqTerms.TotalTermFreqComparator());
+				total, field, new HighFreqTerms.TotalTermFreqComparator());
 		
 		List<String> resultList = new ArrayList<String>();
 		
@@ -251,8 +251,8 @@ public class Indexing {
 	 */
 	public static User readUserIndex(String userName) throws Exception {
 		Path userIndex = new File("./indexes/profiles/"+userName).toPath();
-		List<String> timeline = getHighestTags(userIndex, "utags");
-		List<String> friendsTimeline = getHighestTags(userIndex, "ftags");
+		List<String> timeline = getHighestTerms(userIndex, "utags", 30);
+		List<String> friendsTimeline = getHighestTerms(userIndex, "ftags", 30);
 		
 		User user = new User(userName);
 		user.setPath(userIndex);
