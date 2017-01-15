@@ -26,6 +26,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 
+import model.RankingArticle;
+
 public class Querying {
 
 	static int maxUserFreq;
@@ -41,7 +43,7 @@ public class Querying {
 	 * @throws Exception 
 	 */
 
-	public static List<String> makeQuery(Path userIndex, Path articlesIndex) throws Exception {
+	public static List<RankingArticle> makeQuery(Path userIndex, Path articlesIndex) throws Exception {
 		Directory userDir = FSDirectory.open(userIndex);
 
 		DirectoryReader uReader = DirectoryReader.open(userDir);
@@ -76,7 +78,7 @@ public class Querying {
 //		final long endTime = System.currentTimeMillis();
 //		System.out.println("\nTotal execution time: " + (endTime - startTime) );		
 		
-		List<String> result = getQueryResult(query, artSearcher, resultList);	
+		List<RankingArticle> result = getQueryResult(query, artSearcher, resultList);	
 
 		uReader.close();
 		newsReader.close();
@@ -85,9 +87,9 @@ public class Querying {
 		
 	}
 
-	private static List<String> getQueryResult(BooleanQuery query, IndexSearcher artSearcher, ScoreDoc[] resultList)
+	private static List<RankingArticle> getQueryResult(BooleanQuery query, IndexSearcher artSearcher, ScoreDoc[] resultList)
 			throws IOException, FileNotFoundException {
-		List<String> result = new ArrayList<String>();
+		List<RankingArticle> result = new ArrayList<RankingArticle>();
 		for (int i = 0; i < resultList.length; i++) {
 			Document art = artSearcher.doc(resultList[i].doc);
 			float score = resultList[i].score;
@@ -100,7 +102,8 @@ public class Querying {
 				asource = art.getField("source").stringValue();
 
 //			System.out.println("	title #"+(i+1)+": <" + atitle + "> source: <"+asource+"> *** Score: " + score);
-			result.add("title: <" + atitle + "> source: <"+asource+"> *** Score: " + score + "\n");
+//			result.add("title: <" + atitle + "> source: <"+asource+"> *** Score: " + score + "\n");
+			result.add(new RankingArticle(atitle, asource, score));
 
 			String filename = "explainations/exp_score_"+(i+1)+".txt";
 			PrintWriter out = new PrintWriter(filename);

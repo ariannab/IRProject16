@@ -4,9 +4,11 @@ import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import model.RankingArticle;
 import model.User;
 import twitter4j.TwitterException;
 
@@ -15,6 +17,10 @@ import javax.swing.JScrollPane;
 import java.awt.Font;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 public class GuiUtils {
 	static String txtUser;
@@ -22,7 +28,6 @@ public class GuiUtils {
 	private JPanel panel;
 	private JLabel txtUsername;
 	private JScrollPane scrollPane;
-	private JTextArea textArea;
 	//------User
 	private JPanel panel_1;
 	private JLabel txtUsername_1;
@@ -33,8 +38,10 @@ public class GuiUtils {
 	private JLabel txtUsername_2;
 	private JScrollPane scrollPane_2;
 	private JTextArea fTextArea;
+	private static JTextPane textPane;
+	
 	/**
-	 * Show User details in GUI, as his timeline and his friends'
+	 * Show User details in GUI: recommended news, his timeline and his friends'
 	 * 
 	 * @throws IOException 
 	 * @throws TwitterException 
@@ -47,34 +54,53 @@ public class GuiUtils {
 				window.frame.setVisible(true);
 				window.frame.setLocationRelativeTo(null);
 				
-//					System.out.println("-------------------");
-//					System.out.println(user.getTimelineUser());
-					//TimelineUser.timelineuser(user);
-					//timelineFriends.timelineFriends(user);
-					window.txtUsername.setText(user.getName() + "'s suggested news:");
-					int i = 1;
-					for(String article : user.getRankingArticle() ){
-						window.textArea.append(i + ") " + article.replaceAll("â€™?‹?", "'").replace("Â", "") + "\n");
-						i++;	
+//				System.out.println("-------------------");
+//				System.out.println(user.getTimelineUser());
+				//TimelineUser.timelineuser(user);
+				//timelineFriends.timelineFriends(user);
+				window.txtUsername.setText(user.getName() + "'s suggested news:");
+				int i = 1;
+				StyledDocument doc = textPane.getStyledDocument();
+				for(RankingArticle article : user.getRankingArticle() ){
+//					window.textArea.append(i + ") " + article.replaceAll("â€™?‹?", "'").replace("Â", "") + "\n");
+					SimpleAttributeSet bold = new SimpleAttributeSet();
+					StyleConstants.setBold(bold, true);
+					try
+					{
+					    String title = article.getTitle().replaceAll("â€™?‹?", "'").replace("Â", "");
+					    doc.insertString(doc.getLength(), "Title: ",bold );
+					    doc.insertString(doc.getLength(), "<"+title+">", null );
+					    doc.insertString(doc.getLength(), " *** Source: ", bold );
+					    doc.insertString(doc.getLength(), "<"+article.getSource()+">", null );
+					    doc.insertString(doc.getLength(), " *** Score: ", bold );
+					    doc.insertString(doc.getLength(), "<"+article.getScore()+">"+"\n\n", null );
 					}
-					window.textArea.setSize(1100, 1000);
-					window.textArea.setCaretPosition(0);
-					i = 1;
-					for(String utag : user.getTimelineUser() ){
-						window.userTextArea.append("#"+i+" : "+utag+"\n\n");
-						i++;
-					}
-					window.userTextArea.setCaretPosition(0);
+					catch(Exception e) { System.out.println(e); }
+					
+					/*window.textPane.append(i + ") ");						
+					String title = article.getTitle().replaceAll("â€™?‹?", "'").replace("Â", "");
+					window.textPane.append("Title: " + title);
+					window.textPane.append("	Source: " + article.getSource());
+					window.textPane.append("	Score: " + article.getScore() + "\n\n");	*/
+					window.textPane.setSize(1100, 1000);
+					window.textPane.setCaretPosition(0);
+				}
+				i = 1;
+				for(String utag : user.getTimelineUser() ){
+					window.userTextArea.append("#"+i+" : "+utag+"\n\n");
+					i++;
+				}
+				window.userTextArea.setCaretPosition(0);
 //					window.textArea_1.append(user.getTimelineUser());
-					window.txtUsername_1.setText(user.getName() + window.txtUsername_1.getText());
-					i = 1;
-					for(String ftag : user.getTimelineFriends() ){
-						window.fTextArea.append("#"+i+" : "+ftag+"\n\n");
-						i++;
-					}
-					window.fTextArea.setCaretPosition(0);
-					window.txtUsername_2.setText(user.getName() + window.txtUsername_2.getText());			
-
+				window.txtUsername_1.setText(user.getName() + window.txtUsername_1.getText());
+				i = 1;
+				for(String ftag : user.getTimelineFriends() ){
+					window.fTextArea.append("#"+i+" : "+ftag+"\n\n");
+					i++;
+				}
+				window.fTextArea.setCaretPosition(0);
+				window.txtUsername_2.setText(user.getName() + window.txtUsername_2.getText());			
+				
 			}
 			
 		});
@@ -115,8 +141,8 @@ public class GuiUtils {
 		scrollPane.setBounds(6, 52, 1147, 534);
 		panel.add(scrollPane);
 		
-		textArea = new JTextArea();
-		scrollPane.setViewportView(textArea);
+		textPane = new JTextPane();
+		scrollPane.setViewportView(textPane);
 		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBounds(6, 31, 10, 10);

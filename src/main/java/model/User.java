@@ -11,7 +11,7 @@ public class User {
 	Path user_index_path;
 	List<String> timelineUser;
 	List<String> timelineFriends;
-	List<String> rankingArticle;
+	List<RankingArticle> rankingArticles;
 	
 	
 	public List<String> getTimelineFriends() {
@@ -32,13 +32,13 @@ public class User {
 		this.tweets=new HashSet<String>();
 		this.fTweets=new HashSet<String>();
 		this.timelineFriends = new ArrayList<String>();
-		this.rankingArticle = new ArrayList<String>();
+		this.rankingArticles = new ArrayList<RankingArticle>();
 	}
-	public List<String> getRankingArticle() {
-		return rankingArticle;
+	public List<RankingArticle> getRankingArticle() {
+		return rankingArticles;
 	}
-	public void setRankingArticle(List<String> rankingArticle) {
-		this.rankingArticle = rankingArticle;
+	public void setRankingArticle(List<RankingArticle> rankingArticles) {
+		this.rankingArticles = rankingArticles;
 	}
 	Set<String> tweets;
 	Set<String> fTweets;
