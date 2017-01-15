@@ -1,5 +1,6 @@
 package analysis;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -105,7 +106,8 @@ public class Querying {
 //			result.add("title: <" + atitle + "> source: <"+asource+"> *** Score: " + score + "\n");
 			result.add(new RankingArticle(atitle, asource, score));
 
-			String filename = "explainations/exp_score_"+(i+1)+".txt";
+			new File("explanations/").mkdir();
+			String filename = "explanations/exp_score_"+(i+1)+".txt";
 			PrintWriter out = new PrintWriter(filename);
 			out.println(((artSearcher.explain(query, resultList[i].doc)).toString()));
 			out.close();
