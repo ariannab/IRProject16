@@ -176,9 +176,11 @@ public class Indexing {
 		for(String id : enSourcesIDs){
 			i++;
 			articles = NewsBootUtils.getAllArticlesFromSource(id, i);
-			for(Article a : articles){
-				Document article = articleDoc(a.getTitle(), a.getDescription(), id);	
-				iwriter.addDocument(article);
+			if (articles != null) {
+				for (Article a : articles) {
+					Document article = articleDoc(a.getTitle(), a.getDescription(), id);
+					iwriter.addDocument(article);
+				}
 			}
 		}
 		iwriter.close();
