@@ -143,8 +143,8 @@ public class Indexing {
 
 		user.setPath(userIndex);
 
-		List<String> tagsTimeline = getHighestTerms(userIndex, "utags", 30);
-		List<String> fTagsTimeline = getHighestTerms(userIndex, "ftags", 30);
+		List<String> tagsTimeline = getHighestTerms(userIndex, "utags", 100);
+		List<String> fTagsTimeline = getHighestTerms(userIndex, "ftags", 100);
 		
 		user.setTimelineUser(tagsTimeline);
 		user.setTimelineFriends(fTagsTimeline);
@@ -251,8 +251,8 @@ public class Indexing {
 	 */
 	public static User readUserIndex(String userName) throws Exception {
 		Path userIndex = new File("./indexes/profiles/"+userName).toPath();
-		List<String> timeline = getHighestTerms(userIndex, "utags", 30);
-		List<String> friendsTimeline = getHighestTerms(userIndex, "ftags", 30);
+		List<String> timeline = getHighestTerms(userIndex, "utags", 100);
+		List<String> friendsTimeline = getHighestTerms(userIndex, "ftags", 100);
 		
 		User user = new User(userName);
 		user.setPath(userIndex);

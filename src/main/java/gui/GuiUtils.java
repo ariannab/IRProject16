@@ -36,7 +36,7 @@ public class GuiUtils {
 	private JLabel txtUsername;
 	private JScrollPane scrollPane;
 	//------User
-	private JPanel tagsPanel;
+	private JPanel termsPanel;
 	private JLabel txtUsername_1;
 	private JScrollPane uScrollPane;
 	private JTextPane userTextArea;
@@ -184,32 +184,32 @@ public class GuiUtils {
 		JPanel panel_3 = new JPanel();
 		panel_3.setBounds(6, 31, 10, 10);
 		panel.add(panel_3);
-		//------------User's && friends' tags
-		tagsPanel = new JPanel();
-		tabbedPane.addTab("User", null, tagsPanel, null);
-		GridBagLayout gbl_tagsPanel = new GridBagLayout();
-		gbl_tagsPanel.columnWidths = new int[]{590, 590, 0};
-		gbl_tagsPanel.rowHeights = new int[] {100, 304, 0};
-		gbl_tagsPanel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		gbl_tagsPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		tagsPanel.setLayout(gbl_tagsPanel);
+		//------------User's && friends' terms
+		termsPanel = new JPanel();
+		tabbedPane.addTab("User", null, termsPanel, null);
+		GridBagLayout gbl_termsPanel = new GridBagLayout();
+		gbl_termsPanel.columnWidths = new int[]{590, 590, 0};
+		gbl_termsPanel.rowHeights = new int[] {100, 304, 0};
+		gbl_termsPanel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		gbl_termsPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		termsPanel.setLayout(gbl_termsPanel);
 		
-		txtUsername_1 = new JLabel("'s most frequent tags:");
+		txtUsername_1 = new JLabel("'s most frequent terms:");
 		txtUsername_1.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		GridBagConstraints gbc_txtUsername_1 = new GridBagConstraints();
 		gbc_txtUsername_1.insets = new Insets(0, 0, 5, 5);
 		gbc_txtUsername_1.gridx = 0;
 		gbc_txtUsername_1.gridy = 0;
-		tagsPanel.add(txtUsername_1, gbc_txtUsername_1);
+		termsPanel.add(txtUsername_1, gbc_txtUsername_1);
 		
-		txtUsername_2 = new JLabel("'s friends most frequent tags:");
+		txtUsername_2 = new JLabel("'s friends most frequent terms:");
 		txtUsername_2.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		txtUsername_2.setBounds(38, 18, 679, 23);
 		GridBagConstraints gbc_txtUsername_2 = new GridBagConstraints();
 		gbc_txtUsername_2.insets = new Insets(0, 0, 5, 0);
 		gbc_txtUsername_2.gridx = 1;
 		gbc_txtUsername_2.gridy = 0;
-		tagsPanel.add(txtUsername_2, gbc_txtUsername_2);
+		termsPanel.add(txtUsername_2, gbc_txtUsername_2);
 		
 		uScrollPane = new JScrollPane();
 		GridBagConstraints gbc_uScrollPane = new GridBagConstraints();
@@ -217,7 +217,7 @@ public class GuiUtils {
 		gbc_uScrollPane.insets = new Insets(0, 0, 0, 5);
 		gbc_uScrollPane.gridx = 0;
 		gbc_uScrollPane.gridy = 1;   
-		tagsPanel.add(uScrollPane, gbc_uScrollPane);
+		termsPanel.add(uScrollPane, gbc_uScrollPane);
 		
 		userTextArea = new JTextPane();
 		uScrollPane.setViewportView(userTextArea);
@@ -227,7 +227,7 @@ public class GuiUtils {
 		gbc_fScrollPane.fill = GridBagConstraints.BOTH;
 		gbc_fScrollPane.gridx = 1;
 		gbc_fScrollPane.gridy = 1;
-		tagsPanel.add(fScrollPane, gbc_fScrollPane);
+		termsPanel.add(fScrollPane, gbc_fScrollPane);
 		
 		fTextArea = new JTextPane();
 		fScrollPane.setViewportView(fTextArea);
