@@ -157,12 +157,13 @@ public class GuiMain {
 					try {						
 //						Path artIndex = Indexing.buildNewsIndex();
 						Path artIndex = Paths.get("./indexes/article_index");
-//						User user = Indexing.buildUserIndex(txtUser);
 						User user = null;
 						try {
+							//found the user locally: read his profile
 							user = Indexing.readUserIndex(txtUser);
 						} catch (Exception e1) {
 							try {
+								//user not found locally: build his profile
 								user = Indexing.buildUserIndex(txtUser);
 							} catch (Exception e2) {
 								e2.printStackTrace();

@@ -133,12 +133,12 @@ public class Querying {
 		float boost;
 		float factor;
 		if(mustBoost) {
-			boost = 2f;
+			boost = 1f;
 			factor = maxUserFreq;
 		}
 		else {
 			factor = maxFFreq;
-			boost = 1;
+			boost = 0;
 		}
 		
 		while((t = termIt.next()) != null){
@@ -148,7 +148,8 @@ public class Querying {
 			freq = termIt.totalTermFreq()/factor;
 			
 			//final boost for the term is base boost multiplied by term frequency			
-			float finalBoost = boost * freq;
+//			float finalBoost = boost * freq;
+			float finalBoost = freq + boost;
 			
 			Query qTerm = new TermQuery(new Term("atags", termString));
 			BoostQuery boostQ = new BoostQuery(qTerm, finalBoost);				
