@@ -88,24 +88,30 @@ public class GuiUtils {
 					window.textPane.setSize(1100, 1000);
 					window.textPane.setCaretPosition(0);
 				}
-				i = 1;
-				List<String> utimeline = user.getTimelineUser();
-				List<String> ftimeline = user.getTimelineFriends();
+				i = 0;
+//				List<String> utimeline = user.getTimelineUser();
+//				List<String> ftimeline = user.getTimelineFriends();
+				
+				List<String> utimeline = user.getUstats().getTerms();
+				List<String> ftimeline = user.getFstats().getTerms();
 				List<String> intersection = new ArrayList<String>(utimeline); 
 				intersection.retainAll(ftimeline);
 				
+				List<Integer> ufreq = user.getUstats().getFreq();
+				List<Integer> ffreq = user.getFstats().getFreq();
+				
 				StyledDocument udoc = window.userTextArea.getStyledDocument();
-				for(String utag : utimeline){
+				for(String utag : utimeline){					
 					if(intersection.contains(utag))
 						try {
-							udoc.insertString(udoc.getLength(), "#"+i+" : "+utag+"\n\n", bold);
+							udoc.insertString(udoc.getLength(), "#"+(i+1)+" : "+utag+"			"+ufreq.get(i)+"\n\n", bold);
 						} catch (BadLocationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					else
 						try {
-							udoc.insertString(udoc.getLength(), "#"+i+" : "+utag+"\n\n", null);
+							udoc.insertString(udoc.getLength(), "#"+(i+1)+" : "+utag+"			"+ufreq.get(i)+"\n\n", null);
 						} catch (BadLocationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -117,18 +123,18 @@ public class GuiUtils {
 				window.txtUsername_1.setText(user.getName() + window.txtUsername_1.getText());
 				
 				StyledDocument fdoc = window.fTextArea.getStyledDocument();
-				i = 1;
+				i = 0;
 				for(String ftag : ftimeline){
 					if(intersection.contains(ftag))
 						try {
-							fdoc.insertString(fdoc.getLength(), "#"+i+" : "+ftag+"\n\n", bold);
+							fdoc.insertString(fdoc.getLength(), "#"+(i+1)+" : "+ftag+"			"+ffreq.get(i)+" \n\n", bold);
 						} catch (BadLocationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					else
 						try {
-							fdoc.insertString(fdoc.getLength(), "#"+i+" : "+ftag+"\n\n", null);
+							fdoc.insertString(fdoc.getLength(), "#"+(i+1)+" : "+ftag+"			"+ffreq.get(i)+" \n\n", null);
 						} catch (BadLocationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

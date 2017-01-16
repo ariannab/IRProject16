@@ -28,6 +28,7 @@ import org.apache.lucene.store.FSDirectory;
 
 import model.Article;
 import model.User;
+import model.UserStats;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -143,11 +144,13 @@ public class Indexing {
 
 		user.setPath(userIndex);
 
-		List<String> tagsTimeline = getHighestTerms(userIndex, "utags", 100);
-		List<String> fTagsTimeline = getHighestTerms(userIndex, "ftags", 100);
+//		List<String> tagsTimeline = getHighestTerms(userIndex, "utags", 100);
+//		List<String> fTagsTimeline = getHighestTerms(userIndex, "ftags", 100);		
+//		user.setTimelineUser(tagsTimeline);
+//		user.setTimelineFriends(fTagsTimeline);
 		
-		user.setTimelineUser(tagsTimeline);
-		user.setTimelineFriends(fTagsTimeline);
+		user.setUstats(getHighestTerms(userIndex, "utags", 100));
+		user.setFstats(getHighestTerms(userIndex, "ftags", 100));
 		return user;
 		
 	}
@@ -191,30 +194,33 @@ public class Indexing {
 	}
 	
 	/**
-	 * Get most frequent terms, of user's timeline or his friends'
+	 * Get most "total" frequent terms, 
+	 * of user's timeline or his friends'
 	 * 
 	 * @param userIndex
 	 * @param field (can be utags for users tags, ftags for friends tags)
-	 * @return list of tags, as Strings
+	 * @return a UserStats object i.e. string of terms and their freq
 	 * @throws Exception
 	 */
-	public static List<String> getHighestTerms(Path userIndex, String field, int total) throws Exception{
+	public static UserStats getHighestTerms(Path userIndex, String field, int total) throws Exception{
 		Directory userDir = FSDirectory.open(userIndex);
 
 		DirectoryReader uReader = DirectoryReader.open(userDir);
 		TermStats[] terms = HighFreqTerms.getHighFreqTerms(uReader, 
 				total, field, new HighFreqTerms.TotalTermFreqComparator());
 		
-		List<String> resultList = new ArrayList<String>();
+		UserStats resultList = new UserStats();
 		
-		 for (int i = 0; i < terms.length; i++) 
-			  resultList.add(terms[i].termtext.utf8ToString());
+		 for (int i = 0; i < terms.length; i++) {
+			  resultList.getTerms().add(terms[i].termtext.utf8ToString());
+			  resultList.getFreq().add((int) terms[i].totalTermFreq);
+		 }
 		 
 		 return resultList;
 	}
 	
 	/**
-	 * Get highest frequency (referred to field). 
+	 * Get the highest frequency (referred to field). 
 	 * Utility for normalization of frequencies
 	 * 
 	 * @param userIndex
@@ -243,7 +249,7 @@ public class Indexing {
 	}
 
 	/**
-	 * Method to read an already locally stored profile.
+	 * Read an already locally stored profile.
 	 * 
 	 * @param userName
 	 * @return the User object holding the retrieved information
@@ -251,13 +257,16 @@ public class Indexing {
 	 */
 	public static User readUserIndex(String userName) throws Exception {
 		Path userIndex = new File("./indexes/profiles/"+userName).toPath();
-		List<String> timeline = getHighestTerms(userIndex, "utags", 100);
-		List<String> friendsTimeline = getHighestTerms(userIndex, "ftags", 100);
-		
+//		List<String> timeline = getHighestTerms(userIndex, "utags", 100);
+//		List<String> friendsTimeline = getHighestTerms(userIndex, "ftags", 100);
+//		
 		User user = new User(userName);
 		user.setPath(userIndex);
-		user.setTimelineUser(timeline);
-		user.setTimelineFriends(friendsTimeline);
+
+		user.setUstats(getHighestTerms(userIndex, "utags", 100));
+		user.setFstats(getHighestTerms(userIndex, "ftags", 100));
+//		user.setTimelineUser(timeline);
+//		user.setTimelineFriends(friendsTimeline);
 		return user;
 	}
 
