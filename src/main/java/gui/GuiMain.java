@@ -28,15 +28,8 @@ import analysis.Querying;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
-import javax.swing.JTabbedPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
 import java.awt.Color;
-import java.awt.Window.Type;
 import javax.swing.JPanel;
-import java.awt.FlowLayout;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import java.awt.GridLayout;
 
 public class GuiMain {

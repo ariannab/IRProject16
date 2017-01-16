@@ -5,9 +5,6 @@ import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
-
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -15,7 +12,6 @@ import model.RankingArticle;
 import model.User;
 import twitter4j.TwitterException;
 
-import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import java.awt.Font;
 import javax.swing.JTabbedPane;
@@ -26,11 +22,9 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import javax.swing.JTable;
 
 public class GuiUtils {
 	static String txtUser;
@@ -43,13 +37,9 @@ public class GuiUtils {
 	private JLabel txtUsername_1;
 	private JScrollPane uScrollPane;
 	private JTextPane userTextArea;
-	//------Friends
-	private JPanel panel_2;
 	private JLabel txtUsername_2;
-	private JScrollPane scrollPane_3;
 	private JTextPane fTextArea;
 	private JTextPane textPane;
-	private JLabel label;
 	private JScrollPane fScrollPane;
 	
 	/**
@@ -123,7 +113,6 @@ public class GuiUtils {
 					i++;
 				}
 				window.userTextArea.setCaretPosition(0);
-//					window.textArea_1.append(user.getTimelineUser());
 				window.txtUsername_1.setText(user.getName() + window.txtUsername_1.getText());
 				
 				StyledDocument fdoc = window.fTextArea.getStyledDocument();
@@ -133,14 +122,12 @@ public class GuiUtils {
 						try {
 							fdoc.insertString(fdoc.getLength(), String.format("%1s%-10d%-30s%-4s%n%n","#", i+1, ftag, ffreq.get(i)), style);
 						} catch (BadLocationException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					else
 						try {
 							fdoc.insertString(fdoc.getLength(), String.format("%1s%-10d%-30s%-4s%n%n","#", i+1, ftag, ffreq.get(i)), null);
 						} catch (BadLocationException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					i++;
@@ -176,7 +163,7 @@ public class GuiUtils {
 		frame.getContentPane().add(tabbedPane);
 		
 		panel = new JPanel();
-		tabbedPane.addTab("News", null, panel, null);
+		tabbedPane.addTab("Recommended News", null, panel, null);
 		panel.setLayout(null);
 		
 		txtUsername = new JLabel("");
@@ -196,7 +183,7 @@ public class GuiUtils {
 		panel.add(panel_3);
 		//------------User's && friends' terms
 		termsPanel = new JPanel();
-		tabbedPane.addTab("User", null, termsPanel, null);
+		tabbedPane.addTab("Terms Ranking", null, termsPanel, null);
 		GridBagLayout gbl_termsPanel = new GridBagLayout();
 		gbl_termsPanel.columnWidths = new int[]{590, 590, 0};
 		gbl_termsPanel.rowHeights = new int[] {100, 304, 0};

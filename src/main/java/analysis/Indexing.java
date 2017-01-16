@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +29,6 @@ import model.Article;
 import model.User;
 import model.UserStats;
 import twitter4j.Twitter;
-import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 import utils.NewsBootUtils;
@@ -128,7 +126,7 @@ public class Indexing {
 
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
-		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName, 100);
+		String timeline = TwitterBootUtils.getStringTimeline(twitter, userName, 200);
 		
 		List<Long> friends = TwitterBootUtils.getFollowingList(twitter, userName);
 		friends.retainAll(TwitterBootUtils.getFollowersList(twitter, userName));
@@ -142,7 +140,9 @@ public class Indexing {
 		iwriter.close();
 		analyzer.close();
 
-		user.setPath(userIndex);		
+		user.setPath(userIndex);	
+		int totFriends = getNumOfFriends(userIndex);
+		user.setTotFriends(totFriends);
 		user.setUstats(getHighestTerms(userIndex, "utags", 100));
 		user.setFstats(getHighestTerms(userIndex, "ftags", 100));
 		return user;
