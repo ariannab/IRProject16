@@ -1,8 +1,14 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.EventQueue;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -23,8 +29,14 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class GuiUtils {
 	static String txtUser;
@@ -41,6 +53,7 @@ public class GuiUtils {
 	private JTextPane fTextArea;
 	private JTextPane textPane;
 	private JScrollPane fScrollPane;
+	private JButton timeline;
 	
 	/**
 	 * Show User details in GUI: recommended news, his timeline and his friends'
@@ -159,28 +172,91 @@ public class GuiUtils {
 		frame.getContentPane().setLayout(null);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(6, 6, 1180, 638);
+		tabbedPane.setBounds(6, 6, 1180, 625);
 		frame.getContentPane().add(tabbedPane);
 		
 		panel = new JPanel();
 		tabbedPane.addTab("Recommended News", null, panel, null);
-		panel.setLayout(null);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[] {54, 450, 562, 50, 0};
+		gbl_panel.rowHeights = new int[] {100, 488, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		panel.setLayout(gbl_panel);
+		
+		timeline = new JButton("");
+		timeline.setToolTipText("Click to open Twitter profile");
+		timeline.setOpaque(false);
+		timeline.setContentAreaFilled(false);
+		timeline.setBorderPainted(false);
+		try {
+			ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+		    Image img = ImageIO.read(classloader.getResource("twitter.png"));
+			timeline.setIcon(new ImageIcon(img));
+		} catch (Exception ex) {
+		    System.out.println(ex);
+		}
+		GridBagConstraints gbc_timeline = new GridBagConstraints();
+		gbc_timeline.fill = GridBagConstraints.BOTH;
+		gbc_timeline.insets = new Insets(0, 0, 0, 5);
+		gbc_timeline.gridx = 0;
+		gbc_timeline.gridy = 0;
+		panel.add(timeline, gbc_timeline);
+		timeline.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					openWebpage(new URL("https://twitter.com/" + txtUser));
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		timeline.setBackground(new Color(178, 184, 255));
 		
 		txtUsername = new JLabel("");
-		txtUsername.setBounds(38, 18, 457, 23);
 		txtUsername.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		panel.add(txtUsername);
+		GridBagConstraints gbc_txtUsername = new GridBagConstraints();
+		gbc_txtUsername.fill = GridBagConstraints.BOTH;
+		gbc_txtUsername.insets = new Insets(0, 0, 5, 5);
+		gbc_txtUsername.gridx = 1;
+		gbc_txtUsername.gridy = 0;
+		panel.add(txtUsername, gbc_txtUsername);
+		
+		JButton button = new JButton("");
+		button.setIcon(new ImageIcon(GuiUtils.class.getResource("/com/sun/javafx/scene/control/skin/caspian/dialog-confirm.png")));
+		button.setOpaque(false);
+		button.setContentAreaFilled(false);
+		button.setBorderPainted(false);
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Desktop.getDesktop().open(new File("./explanations"));
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		button.setToolTipText("Click to open scores' explanations folder");
+		button.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 14));
+		GridBagConstraints gbc_button = new GridBagConstraints();
+		gbc_button.fill = GridBagConstraints.BOTH;
+		gbc_button.insets = new Insets(0, 0, 5, 0);
+		gbc_button.gridx = 3;
+		gbc_button.gridy = 0;
+		panel.add(button, gbc_button);
 		
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(6, 52, 1147, 534);
-		panel.add(scrollPane);
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridwidth = 4;
+		gbc_scrollPane.gridx = 0;
+		gbc_scrollPane.gridy = 1;
+		panel.add(scrollPane, gbc_scrollPane);
 		
 		textPane = new JTextPane();
+		textPane.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		scrollPane.setViewportView(textPane);
 		
-		JPanel panel_3 = new JPanel();
-		panel_3.setBounds(6, 31, 10, 10);
-		panel.add(panel_3);
 		//------------User's && friends' terms
 		termsPanel = new JPanel();
 		tabbedPane.addTab("Terms Ranking", null, termsPanel, null);
@@ -231,5 +307,23 @@ public class GuiUtils {
 		fTextArea.setFont(new Font("Monospaced", fTextArea.getFont().getStyle(), 16));
 		fScrollPane.setViewportView(fTextArea);
 		
+	}
+	public static void openWebpage(URI uri) {
+	    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+	    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+	        try {
+	            desktop.browse(uri);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+	public static void openWebpage(URL url) {
+	    try {
+	        openWebpage(url.toURI());
+	    } catch (URISyntaxException e) {
+	        e.printStackTrace();
+	    }
 	}
 }
