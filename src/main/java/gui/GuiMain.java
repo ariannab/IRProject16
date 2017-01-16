@@ -100,7 +100,7 @@ public class GuiMain {
 		frameMain.getContentPane().add(btnSearchNews);
 		
 		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(null, "Users' List", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.setBorder(new TitledBorder(null, "Users List", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel.setBounds(6, 68, 224, 199);
 		frameMain.getContentPane().add(panel);
 		panel.setLayout(new GridLayout(0, 1, 0, 0));
@@ -125,7 +125,7 @@ public class GuiMain {
 		btnAddUser.setBounds(20, 78, 160, 32);
 		panel_1.add(btnAddUser);
 		
-		JLabel lblNewLabel = new JLabel("Choose the user you want to profile...");
+		JLabel lblNewLabel = new JLabel("Select user in the list below, then search:");
 		lblNewLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
 		lblNewLabel.setToolTipText("Select a user from \"Users' List\", than click the \"Search News\" button");
 		lblNewLabel.setBounds(17, 28, 337, 28);
@@ -150,7 +150,7 @@ public class GuiMain {
 				}
 				else{
 					JOptionPane.showMessageDialog(frameMain,
-						    "Retrieving data: it may take a few seconds",
+						    "Retrieving data: may take a few seconds",
 						    "Warning",
 						    JOptionPane.WARNING_MESSAGE);
 					String txtUser = listUsers.getSelectedItem().toString();

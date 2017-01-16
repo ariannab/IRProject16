@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,12 +23,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import javax.swing.JTable;
 
 public class GuiUtils {
 	static String txtUser;
@@ -75,7 +78,7 @@ public class GuiUtils {
 				for(RankingArticle article : user.getRankingArticle() ){
 					try
 					{
-					    String title = article.getTitle().replaceAll("&#039;", "'");
+					    String title = article.getTitle().replaceAll("&#039;", "'").replaceAll("’?", "'");
 					    doc.insertString(doc.getLength(), i + ")"+" Title: ",bold );
 					    doc.insertString(doc.getLength(), "<"+title+">", null );
 					    doc.insertString(doc.getLength(), " *** Source: ", bold );
@@ -88,10 +91,7 @@ public class GuiUtils {
 					window.textPane.setSize(1100, 1000);
 					window.textPane.setCaretPosition(0);
 				}
-				i = 0;
-//				List<String> utimeline = user.getTimelineUser();
-//				List<String> ftimeline = user.getTimelineFriends();
-				
+				i = 0;				
 				List<String> utimeline = user.getUstats().getTerms();
 				List<String> ftimeline = user.getFstats().getTerms();
 				List<String> intersection = new ArrayList<String>(utimeline); 
@@ -100,18 +100,22 @@ public class GuiUtils {
 				List<Integer> ufreq = user.getUstats().getFreq();
 				List<Integer> ffreq = user.getFstats().getFreq();
 				
+				Style style = window.userTextArea.addStyle("Colored Style", null);
+		        StyleConstants.setForeground(style, Color.decode("#0000cc"));
+		        StyleConstants.setBold(style, true);
+				
 				StyledDocument udoc = window.userTextArea.getStyledDocument();
 				for(String utag : utimeline){					
 					if(intersection.contains(utag))
 						try {
-							udoc.insertString(udoc.getLength(), "#"+(i+1)+" : "+utag+"			"+ufreq.get(i)+"\n\n", bold);
+							udoc.insertString(udoc.getLength(), String.format("%1s%-10d%-30s%-4s%n%n","#", i+1, utag, ufreq.get(i)), style);
 						} catch (BadLocationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					else
 						try {
-							udoc.insertString(udoc.getLength(), "#"+(i+1)+" : "+utag+"			"+ufreq.get(i)+"\n\n", null);
+							udoc.insertString(udoc.getLength(), String.format("%1s%-10d%-30s%-4s%n%n","#", +i+1, utag, ufreq.get(i)), null);
 						} catch (BadLocationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -127,14 +131,14 @@ public class GuiUtils {
 				for(String ftag : ftimeline){
 					if(intersection.contains(ftag))
 						try {
-							fdoc.insertString(fdoc.getLength(), "#"+(i+1)+" : "+ftag+"			"+ffreq.get(i)+" \n\n", bold);
+							fdoc.insertString(fdoc.getLength(), String.format("%1s%-10d%-30s%-4s%n%n","#", i+1, ftag, ffreq.get(i)), style);
 						} catch (BadLocationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					else
 						try {
-							fdoc.insertString(fdoc.getLength(), "#"+(i+1)+" : "+ftag+"			"+ffreq.get(i)+" \n\n", null);
+							fdoc.insertString(fdoc.getLength(), String.format("%1s%-10d%-30s%-4s%n%n","#", i+1, ftag, ffreq.get(i)), null);
 						} catch (BadLocationException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -142,7 +146,7 @@ public class GuiUtils {
 					i++;
 				}
 				window.fTextArea.setCaretPosition(0);
-				window.txtUsername_2.setText(user.getName() + window.txtUsername_2.getText());			
+				window.txtUsername_2.setText("Friends ("+user.getTotFriends()+")"+window.txtUsername_2.getText());			
 				
 			}
 			
@@ -208,7 +212,7 @@ public class GuiUtils {
 		gbc_txtUsername_1.gridy = 0;
 		termsPanel.add(txtUsername_1, gbc_txtUsername_1);
 		
-		txtUsername_2 = new JLabel("'s friends most frequent terms:");
+		txtUsername_2 = new JLabel(" most frequent terms:");
 		txtUsername_2.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		txtUsername_2.setBounds(38, 18, 679, 23);
 		GridBagConstraints gbc_txtUsername_2 = new GridBagConstraints();
@@ -226,6 +230,7 @@ public class GuiUtils {
 		termsPanel.add(uScrollPane, gbc_uScrollPane);
 		
 		userTextArea = new JTextPane();
+		userTextArea.setFont(new Font("Monospaced", userTextArea.getFont().getStyle(), 16));
 		uScrollPane.setViewportView(userTextArea);
 		
 		fScrollPane = new JScrollPane();
@@ -236,6 +241,7 @@ public class GuiUtils {
 		termsPanel.add(fScrollPane, gbc_fScrollPane);
 		
 		fTextArea = new JTextPane();
+		fTextArea.setFont(new Font("Monospaced", fTextArea.getFont().getStyle(), 16));
 		fScrollPane.setViewportView(fTextArea);
 		
 	}

@@ -7,8 +7,7 @@ import java.util.List;
 public class User {
 	String name;
 	Path user_index_path;
-	List<String> timelineUser;
-	List<String> timelineFriends;
+	int totFriends;
 	List<RankingArticle> rankingArticles;
 	UserStats ustats;
 	UserStats fstats;
@@ -16,21 +15,7 @@ public class User {
 	public User(String name) {
 		super();
 		this.name = name;
-		this.timelineFriends = new ArrayList<String>();
 		this.rankingArticles = new ArrayList<RankingArticle>();
-	}
-
-	public List<String> getTimelineFriends() {
-		return timelineFriends;
-	}
-	public void setTimelineFriends(List<String> timelineFriends) {
-		this.timelineFriends = timelineFriends;
-	}
-	public List<String> getTimelineUser() {
-		return timelineUser;
-	}
-	public void setTimelineUser(List<String> timelineUser) {
-		this.timelineUser = timelineUser;
 	}
 
 	public List<RankingArticle> getRankingArticle() {
@@ -63,6 +48,14 @@ public class User {
 	}
 	public void setFstats(UserStats fstats) {
 		this.fstats = fstats;
+	}
+
+	public int getTotFriends() {
+		return totFriends;
+	}
+
+	public void setTotFriends(int totFriends) {
+		this.totFriends = totFriends;
 	}
 
 }

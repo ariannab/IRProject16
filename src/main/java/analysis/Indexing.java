@@ -142,13 +142,7 @@ public class Indexing {
 		iwriter.close();
 		analyzer.close();
 
-		user.setPath(userIndex);
-
-//		List<String> tagsTimeline = getHighestTerms(userIndex, "utags", 100);
-//		List<String> fTagsTimeline = getHighestTerms(userIndex, "ftags", 100);		
-//		user.setTimelineUser(tagsTimeline);
-//		user.setTimelineFriends(fTagsTimeline);
-		
+		user.setPath(userIndex);		
 		user.setUstats(getHighestTerms(userIndex, "utags", 100));
 		user.setFstats(getHighestTerms(userIndex, "ftags", 100));
 		return user;
@@ -257,17 +251,24 @@ public class Indexing {
 	 */
 	public static User readUserIndex(String userName) throws Exception {
 		Path userIndex = new File("./indexes/profiles/"+userName).toPath();
-//		List<String> timeline = getHighestTerms(userIndex, "utags", 100);
-//		List<String> friendsTimeline = getHighestTerms(userIndex, "ftags", 100);
-//		
-		User user = new User(userName);
-		user.setPath(userIndex);
 
+		User user = new User(userName);
+		int totFriends = getNumOfFriends(userIndex);
+		user.setPath(userIndex);
+		user.setTotFriends(totFriends);
 		user.setUstats(getHighestTerms(userIndex, "utags", 100));
 		user.setFstats(getHighestTerms(userIndex, "ftags", 100));
-//		user.setTimelineUser(timeline);
-//		user.setTimelineFriends(friendsTimeline);
+		
+
 		return user;
+	}
+
+
+	private static int getNumOfFriends(Path userIndex) throws NumberFormatException, IOException {
+		Directory userDir = FSDirectory.open(userIndex);
+
+		DirectoryReader uReader = DirectoryReader.open(userDir);
+		return Integer.valueOf(uReader.document(0).get("friends"));
 	}
 
 }
