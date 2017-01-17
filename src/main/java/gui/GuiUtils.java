@@ -108,19 +108,24 @@ public class GuiUtils {
 		        StyleConstants.setBold(style, true);
 				
 				StyledDocument udoc = window.userTextArea.getStyledDocument();
-				for(String utag : utimeline){					
+				for(String utag : utimeline){
+					if(i==0){
+						try {
+							udoc.insertString(udoc.getLength(), String.format("%-11s%-30s%-4s%n%n", "Rank", "Term", "Frequency"), bold);
+						} catch (BadLocationException e1) {
+							e1.printStackTrace();
+						}
+					}
 					if(intersection.contains(utag))
 						try {
 							udoc.insertString(udoc.getLength(), String.format("%1s%-10d%-30s%-4s%n%n","#", i+1, utag, ufreq.get(i)), style);
 						} catch (BadLocationException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					else
 						try {
 							udoc.insertString(udoc.getLength(), String.format("%1s%-10d%-30s%-4s%n%n","#", +i+1, utag, ufreq.get(i)), null);
 						} catch (BadLocationException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					i++;
@@ -131,6 +136,13 @@ public class GuiUtils {
 				StyledDocument fdoc = window.fTextArea.getStyledDocument();
 				i = 0;
 				for(String ftag : ftimeline){
+					if(i==0){
+						try {
+							fdoc.insertString(fdoc.getLength(), String.format("%-11s%-30s%-4s%n%n", "Rank", "Term", "Frequency"), bold);
+						} catch (BadLocationException e1) {
+							e1.printStackTrace();
+						}
+					}
 					if(intersection.contains(ftag))
 						try {
 							fdoc.insertString(fdoc.getLength(), String.format("%1s%-10d%-30s%-4s%n%n","#", i+1, ftag, ffreq.get(i)), style);
@@ -167,15 +179,17 @@ public class GuiUtils {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(500, 500, 1200, 670);
+		frame.setBounds(500, 500, 1368, 768);
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(6, 6, 1180, 625);
+		tabbedPane.setBackground(new Color(192, 192, 192));
+		tabbedPane.setBounds(0, 26, 1352, 697);
 		frame.getContentPane().add(tabbedPane);
 		
 		panel = new JPanel();
+		panel.setBackground(new Color(245, 245, 245));
 		tabbedPane.addTab("Recommended News", null, panel, null);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[] {54, 450, 562, 50, 0};
@@ -197,8 +211,10 @@ public class GuiUtils {
 		    System.out.println(ex);
 		}
 		GridBagConstraints gbc_timeline = new GridBagConstraints();
-		gbc_timeline.fill = GridBagConstraints.BOTH;
-		gbc_timeline.insets = new Insets(0, 0, 0, 5);
+		gbc_timeline.anchor = GridBagConstraints.EAST;
+		gbc_timeline.ipadx = 60;
+		gbc_timeline.fill = GridBagConstraints.VERTICAL;
+		gbc_timeline.insets = new Insets(0, 0, 5, 5);
 		gbc_timeline.gridx = 0;
 		gbc_timeline.gridy = 0;
 		panel.add(timeline, gbc_timeline);
@@ -239,16 +255,17 @@ public class GuiUtils {
 		button.setToolTipText("Click to open scores' explanations folder");
 		button.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 14));
 		GridBagConstraints gbc_button = new GridBagConstraints();
-		gbc_button.fill = GridBagConstraints.BOTH;
+		gbc_button.fill = GridBagConstraints.VERTICAL;
 		gbc_button.insets = new Insets(0, 0, 5, 0);
-		gbc_button.gridx = 3;
+		gbc_button.gridx = 4;
 		gbc_button.gridy = 0;
 		panel.add(button, gbc_button);
 		
 		scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.gridheight = 2;
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane.gridwidth = 4;
+		gbc_scrollPane.gridwidth = 5;
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
 		panel.add(scrollPane, gbc_scrollPane);
@@ -259,9 +276,10 @@ public class GuiUtils {
 		
 		//------------User's && friends' terms
 		termsPanel = new JPanel();
+		termsPanel.setBackground(new Color(245, 245, 245));
 		tabbedPane.addTab("Terms Ranking", null, termsPanel, null);
 		GridBagLayout gbl_termsPanel = new GridBagLayout();
-		gbl_termsPanel.columnWidths = new int[]{590, 590, 0};
+		gbl_termsPanel.columnWidths = new int[]{672, 672, 0};
 		gbl_termsPanel.rowHeights = new int[] {100, 304, 0};
 		gbl_termsPanel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
 		gbl_termsPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};

@@ -31,8 +31,9 @@ import model.RankingArticle;
 
 public class Querying {
 
-	static int maxUserFreq;
-	static int maxFFreq;
+	static float maxUserFreq;
+	static float maxFFreq;
+	static float uboost;
 	
 	/**
 	 * Build and submit a boolean query to the news index. 
@@ -44,7 +45,7 @@ public class Querying {
 	 * @throws Exception 
 	 */
 
-	public static List<RankingArticle> makeQuery(Path userIndex, Path articlesIndex) throws Exception {
+	public static List<RankingArticle> makeQuery(Path userIndex, Path articlesIndex, boolean alwaysTop) throws Exception {
 		Directory userDir = FSDirectory.open(userIndex);
 
 		DirectoryReader uReader = DirectoryReader.open(userDir);
@@ -61,9 +62,9 @@ public class Querying {
 		
 		maxUserFreq = Indexing.getHighestFreq(userIndex, "utags");
 		maxFFreq = Indexing.getHighestFreq(userIndex, "ftags");
-		
-		qBuilder = addTokensInQuery(uTermVector, qBuilder, true);		
-		qBuilder = addTokensInQuery(fTermVector, qBuilder, false);	
+				
+		qBuilder = addUserContentInQuery(uTermVector, qBuilder, alwaysTop);
+		qBuilder = addFriendsContentInQuery(fTermVector, qBuilder);
 		BooleanQuery query = qBuilder.build();		
 		
 		Directory newsDir = FSDirectory.open(articlesIndex);
@@ -74,7 +75,6 @@ public class Querying {
 		//submit query to the news index
 		TopDocs topdocs = artSearcher.search(query, 20);
 		ScoreDoc[] resultList = topdocs.scoreDocs; 
-//		System.out.println("BM25 Similarity results: " + topdocs.totalHits + " - we show top 20");
 
 //		final long endTime = System.currentTimeMillis();
 //		System.out.println("\nTotal execution time: " + (endTime - startTime) );		
@@ -118,65 +118,70 @@ public class Querying {
 	}
 
 	/**
-	 * Add tokens (clauses) to the boolean query, adjusting the boost
+	 * Add friends tokens (clauses) to the boolean query, adjusting the boost
 	 * 
 	 * @param termIt
 	 * @param qBuilder
-	 * @param boost
 	 * @return the updated query builder
 	 * @throws IOException
 	 */
-	private static Builder addTokensInQuery(Terms termV, Builder qBuilder, boolean mustBoost) throws IOException {		
+	private static Builder addFriendsContentInQuery(Terms termV, Builder qBuilder) throws IOException {		
 		BytesRef t;
 		TermsEnum termIt = termV.iterator();
 		float freq;
-		float boost;
-		float factor;
-		if(mustBoost) {
-			boost = 2f;
-			factor = maxUserFreq;
-		}
-		else {
-			factor = maxFFreq;
-			boost = 1f;
-		}
-		
+				
 		while((t = termIt.next()) != null){
 			String termString = t.utf8ToString();
 			
 			//normalization of frequencies (values in 0-1)
-			freq = termIt.totalTermFreq()/factor;
+			freq = termIt.totalTermFreq()/maxUserFreq;
+						
+			Query qTerm = new TermQuery(new Term("atags", termString));
+			BoostQuery boostQ = new BoostQuery(qTerm, freq);				
+			qBuilder.add(boostQ, BooleanClause.Occur.SHOULD);			
+		}
+		
+		return qBuilder;		
+	}	
+	
+	/**
+	 * Add user tokens (clauses) to the boolean query, adjusting the boost
+	 * 
+	 * @param termIt
+	 * @param qBuilder
+	 * @param alwaysTop, to know if the boost is absolute or not
+	 * @return the updated query builder
+	 * @throws IOException
+	 */
+	private static Builder addUserContentInQuery(Terms termV, Builder qBuilder, boolean alwaysTop) throws IOException {		
+		BytesRef t;
+		TermsEnum termIt = termV.iterator();
+		float freq;
+		float finalBoost;
+				
+		while((t = termIt.next()) != null){
+			String termString = t.utf8ToString();
 			
-			//final boost for the term is base boost multiplied by term frequency			
-			float finalBoost = boost * freq;
-//			float finalBoost = freq + boost;
+			//normalization of frequencies (values in 0-1)
+			freq = termIt.totalTermFreq()/maxUserFreq;
+			
+			if(alwaysTop){
+				finalBoost = freq + 1;
+			}else{
+			//user's not always on top: his boost can be 2 or 3, his friends' always 1
+				finalBoost = uboost * freq;
+			}
 			
 			Query qTerm = new TermQuery(new Term("atags", termString));
 			BoostQuery boostQ = new BoostQuery(qTerm, finalBoost);				
 			qBuilder.add(boostQ, BooleanClause.Occur.SHOULD);			
 		}
 		
-		return qBuilder;
-		
+		return qBuilder;		
 	}
 
-//	private static Builder addTokensForQuery(Document doc, String fieldName, Builder qBuilder, float boost) throws IOException {
-//		IndexableField ufield = doc.getField(fieldName);
-//		TokenStream stream =ufield.tokenStream(analyzer, null);
-//		CharTermAttribute termAtt = stream.addAttribute(CharTermAttribute.class);
-//
-//		try {
-//			stream.reset();
-//			while (stream.incrementToken()) {
-//				Query qTerm = new TermQuery(new Term("atags", termAtt.toString()));
-//				BoostQuery boostQ = new BoostQuery(qTerm, boost);				
-//				qBuilder.add(boostQ, BooleanClause.Occur.SHOULD);
-//			}
-//			stream.end();
-//		} finally {
-//			stream.close();
-//		}
-//		return qBuilder;
-//	}
+	public static void setUboost(float uboost) {
+		Querying.uboost = uboost;
+	}
 
 }

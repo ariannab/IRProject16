@@ -31,6 +31,8 @@ import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class GuiMain {
 
@@ -84,45 +86,59 @@ public class GuiMain {
 		frameMain.setFont(new Font("Dialog", Font.BOLD, 16));
 		frameMain.setBackground(Color.LIGHT_GRAY);
 		frameMain.setTitle("News Retriever");
-		frameMain.setBounds(100, 100, 467, 319);
+		frameMain.setBounds(100, 100, 468, 344);
 		frameMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameMain.getContentPane().setLayout(null);
 		
 		btnSearchNews = new JButton("Search News");
-		btnSearchNews.setBounds(264, 86, 161, 32);
+		btnSearchNews.setBounds(38, 248, 160, 32);
 		frameMain.getContentPane().add(btnSearchNews);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Users List", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(6, 68, 224, 199);
+		panel.setBounds(6, 68, 224, 174);
 		frameMain.getContentPane().add(panel);
-		panel.setLayout(new GridLayout(0, 1, 0, 0));
+		panel.setLayout(null);
 		
 		
 		listUsers = new java.awt.List();
+		listUsers.setBounds(10, 18, 204, 144);
 		panel.add(listUsers);
 		
 		panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Add Twitter Account", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(59, 59, 59)));
-		panel_1.setBounds(244, 130, 201, 137);
+		panel_1.setBounds(244, 158, 201, 140);
 		frameMain.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 		
 		txtAddUser = new JTextField();
-		txtAddUser.setBounds(20, 28, 160, 32);
+		txtAddUser.setBounds(20, 35, 160, 32);
 		panel_1.add(txtAddUser);
 		txtAddUser.setToolTipText("Username");
 		txtAddUser.setColumns(10);
 		
-		btnAddUser = new JButton("Add User");
-		btnAddUser.setBounds(20, 78, 160, 32);
+		btnAddUser = new JButton("Append");
+		btnAddUser.setBounds(20, 90, 160, 32);
 		panel_1.add(btnAddUser);
 		
 		JLabel lblNewLabel = new JLabel("Select user in the list below, then search:");
 		lblNewLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
 		lblNewLabel.setToolTipText("Select a user from \"Users' List\", than click the \"Search News\" button");
-		lblNewLabel.setBounds(17, 28, 337, 28);
+		lblNewLabel.setBounds(16, 17, 321, 28);
 		frameMain.getContentPane().add(lblNewLabel);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBorder(new TitledBorder(null, "User's Content Boost", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_2.setBounds(244, 68, 201, 78);
+		frameMain.getContentPane().add(panel_2);
+		panel_2.setLayout(null);
+		
+		final JComboBox<String> boostSelect = new JComboBox<String>();
+		boostSelect.setBounds(18, 26, 160, 32);
+		panel_2.add(boostSelect);
+		boostSelect.setToolTipText("<html>\r\nBy default, user terms are ALWAYS on top of his <br>\r\nfriends' no matter what! Or, you can choose to   <br>\r\ngive user a slighter boost.\r\n</html>\r\r\n");
+		boostSelect.setModel(new DefaultComboBoxModel<String>(new String[] {"Absolute", "3", "2"}));
+		boostSelect.setSelectedIndex(0);
 		btnAddUser.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -164,8 +180,15 @@ public class GuiMain {
 						}
 						
 						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
-						try {
-							user.setRankingArticle(Querying.makeQuery(user.getUser_index_path(), artIndex));
+						float uboost;
+						try {				
+							boolean alwaysTop = boostSelect.getSelectedIndex()==0;
+							if(!alwaysTop){
+								uboost= Float.valueOf((String) boostSelect.getSelectedItem());
+								
+								Querying.setUboost(uboost);
+							}								
+							user.setRankingArticle(Querying.makeQuery(user.getUser_index_path(), artIndex, alwaysTop));
 						} catch (Exception e1) {
 							e1.printStackTrace();
 						}

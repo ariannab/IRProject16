@@ -3,7 +3,6 @@ package analysis;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
@@ -141,8 +140,7 @@ public class Indexing {
 		analyzer.close();
 
 		user.setPath(userIndex);	
-		int totFriends = getNumOfFriends(userIndex);
-		user.setTotFriends(totFriends);
+		user.setTotFriends(totalFriends);
 		user.setUstats(getHighestTerms(userIndex, "utags", 100));
 		user.setFstats(getHighestTerms(userIndex, "ftags", 100));
 		return user;
@@ -230,16 +228,6 @@ public class Indexing {
 				1, field, new HighFreqTerms.TotalTermFreqComparator());
 		
 		 return (int) terms[0].totalTermFreq;
-	}
-	
-	public static void main(String args[]) throws Exception{		
-		System.out.println("\nBuilding news index, then user index...");
-		Path artIndex = Paths.get("./indexes/article_index");
-		Path userIndex = Paths.get("./indexes/profile_index");
-		
-		System.out.println("\n\nNow querying!");
-
-		Querying.makeQuery(userIndex, artIndex);
 	}
 
 	/**
