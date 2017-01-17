@@ -69,8 +69,8 @@ public class GuiUtils {
 				window.frame.setVisible(true);
 				window.frame.setLocationRelativeTo(null);
 				
-//				System.out.println("-------------------");
-//				System.out.println(user.getTimelineUser());
+				//System.out.println("-------------------");
+				//System.out.println(user.getTimelineUser());
 				//TimelineUser.timelineuser(user);
 				//timelineFriends.timelineFriends(user);
 				window.txtUsername.setText(user.getName() + "'s suggested news:");
@@ -78,16 +78,16 @@ public class GuiUtils {
 				StyledDocument doc = window.textPane.getStyledDocument();
 				SimpleAttributeSet bold = new SimpleAttributeSet();
 				StyleConstants.setBold(bold, true);
+				try {
+					doc.insertString(doc.getLength(), String.format("%-4s%-150s%-24s%-10s%n%n","", "Title", "Source", "Score"), bold);
+				} catch (BadLocationException e2) {
+					e2.printStackTrace();
+				}
 				for(RankingArticle article : user.getRankingArticle() ){
 					try
 					{
 					    String title = article.getTitle().replaceAll("&#039;", "'").replaceAll("’?", "'");
-					    doc.insertString(doc.getLength(), i + ")"+" Title: ",bold );
-					    doc.insertString(doc.getLength(), "<"+title+">", null );
-					    doc.insertString(doc.getLength(), " *** Source: ", bold );
-					    doc.insertString(doc.getLength(), "<"+article.getSource()+">", null );
-					    doc.insertString(doc.getLength(), " *** Score: ", bold );
-					    doc.insertString(doc.getLength(), "<"+article.getScore()+">"+"\n\n", null );
+					    doc.insertString(doc.getLength(), String.format("%-4s%-150s%-24s%-10s%n%n",i+".", title, article.getSource(), article.getScore()), null);
 					    i++;
 					}
 					catch(Exception e) { System.out.println(e); }
@@ -271,7 +271,7 @@ public class GuiUtils {
 		panel.add(scrollPane, gbc_scrollPane);
 		
 		textPane = new JTextPane();
-		textPane.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		textPane.setFont(new Font("Monospaced", textPane.getFont().getStyle(), textPane.getFont().getSize()));
 		scrollPane.setViewportView(textPane);
 		
 		//------------User's && friends' terms
