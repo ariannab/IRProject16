@@ -11,7 +11,9 @@ import javax.swing.JButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.awt.event.ActionEvent;
@@ -30,7 +32,6 @@ import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import javax.swing.JPanel;
-import java.awt.GridLayout;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 
@@ -163,21 +164,10 @@ public class GuiMain {
 						    "Warning",
 						    JOptionPane.WARNING_MESSAGE);
 					String txtUser = listUsers.getSelectedItem().toString();
-					try {						
-//						Path artIndex = Indexing.buildNewsIndex();
-						Path artIndex = Paths.get("./indexes/article_index");
-						User user = null;
-						try {
-							//found the user locally: read his profile
-							user = Indexing.readUserIndex(txtUser);
-						} catch (Exception e1) {
-							try {
-								//user not found locally: build his profile
-								user = Indexing.buildUserIndex(txtUser);
-							} catch (Exception e2) {
-								e2.printStackTrace();
-							}
-						}
+					try {	
+						//check if indexes already exist locally, if not build them
+						Path artIndex = Files.exists(Paths.get("./indexes/article_index")) ? Paths.get("./indexes/article_index") : Indexing.buildNewsIndex();
+						User user = Files.exists(Paths.get("./indexes/profiles/"+txtUser)) ? Indexing.readUserIndex(txtUser) : Indexing.buildUserIndex(txtUser);
 						
 						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 						float uboost;
@@ -198,6 +188,9 @@ public class GuiMain {
 						e2.printStackTrace();
 					} catch (TwitterException e1) {
 						e1.printStackTrace();
+					} catch (Exception e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
 					}					
 				}
 			}
