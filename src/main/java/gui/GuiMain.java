@@ -11,7 +11,6 @@ import javax.swing.JButton;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,6 +33,7 @@ import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 
 public class GuiMain {
 
@@ -44,6 +44,8 @@ public class GuiMain {
 	JButton btnAddUser;
 	private JButton btnSearchNews;
 	private JPanel panel_1;
+	private JCheckBox refreshN;
+	private JCheckBox refreshP;
 
 	/**
 	 * Launch the application.
@@ -87,39 +89,41 @@ public class GuiMain {
 		frameMain.setFont(new Font("Dialog", Font.BOLD, 16));
 		frameMain.setBackground(Color.LIGHT_GRAY);
 		frameMain.setTitle("News Retriever");
-		frameMain.setBounds(100, 100, 468, 344);
+		frameMain.setBounds(100, 100, 512, 426);
 		frameMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frameMain.getContentPane().setLayout(null);
 		
 		btnSearchNews = new JButton("Search News");
-		btnSearchNews.setBounds(38, 248, 160, 32);
+		btnSearchNews.setFont(new Font("SansSerif", Font.BOLD, 14));
+		btnSearchNews.setBounds(156, 339, 201, 42);
 		frameMain.getContentPane().add(btnSearchNews);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Users List", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(6, 68, 224, 174);
+		panel.setBounds(6, 68, 241, 261);
 		frameMain.getContentPane().add(panel);
 		panel.setLayout(null);
 		
 		
 		listUsers = new java.awt.List();
-		listUsers.setBounds(10, 18, 204, 144);
+		listUsers.setFont(new Font("Courier New", Font.PLAIN, 14));
+		listUsers.setBounds(10, 18, 221, 233);
 		panel.add(listUsers);
 		
 		panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Add Twitter Account", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(59, 59, 59)));
-		panel_1.setBounds(244, 158, 201, 140);
+		panel_1.setBounds(262, 199, 198, 130);
 		frameMain.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 		
 		txtAddUser = new JTextField();
-		txtAddUser.setBounds(20, 35, 160, 32);
+		txtAddUser.setBounds(20, 29, 160, 32);
 		panel_1.add(txtAddUser);
 		txtAddUser.setToolTipText("Username");
 		txtAddUser.setColumns(10);
 		
 		btnAddUser = new JButton("Append");
-		btnAddUser.setBounds(20, 90, 160, 32);
+		btnAddUser.setBounds(20, 73, 160, 32);
 		panel_1.add(btnAddUser);
 		
 		JLabel lblNewLabel = new JLabel("Select user in the list below, then search:");
@@ -130,7 +134,7 @@ public class GuiMain {
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new TitledBorder(null, "User's Content Boost", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_2.setBounds(244, 68, 201, 78);
+		panel_2.setBounds(259, 68, 201, 78);
 		frameMain.getContentPane().add(panel_2);
 		panel_2.setLayout(null);
 		
@@ -140,6 +144,14 @@ public class GuiMain {
 		boostSelect.setToolTipText("<html>\r\nBy default, user terms are ALWAYS on top of his <br>\r\nfriends' no matter what! Or, you can choose to   <br>\r\ngive user a slighter boost.\r\n</html>\r\r\n");
 		boostSelect.setModel(new DefaultComboBoxModel<String>(new String[] {"Absolute", "3", "2"}));
 		boostSelect.setSelectedIndex(0);
+		
+		refreshN = new JCheckBox("Refresh News");
+		refreshN.setBounds(269, 146, 118, 18);
+		frameMain.getContentPane().add(refreshN);
+		
+		refreshP = new JCheckBox("Reresh Profile");
+		refreshP.setBounds(269, 169, 104, 18);
+		frameMain.getContentPane().add(refreshP);
 		btnAddUser.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -165,9 +177,20 @@ public class GuiMain {
 						    JOptionPane.WARNING_MESSAGE);
 					String txtUser = listUsers.getSelectedItem().toString();
 					try {	
-						//check if indexes already exist locally, if not build them
-						Path artIndex = Files.exists(Paths.get("./indexes/article_index")) ? Paths.get("./indexes/article_index") : Indexing.buildNewsIndex();
-						User user = Files.exists(Paths.get("./indexes/profiles/"+txtUser)) ? Indexing.readUserIndex(txtUser) : Indexing.buildUserIndex(txtUser);
+						//check if indexes already exist locally, if not, build them
+						//...unless explicit refreshing is required
+						
+						Path artIndex = null;
+						User user = null;
+						if(!refreshN.isSelected())
+							artIndex = Files.exists(Paths.get("./indexes/article_index")) ? Paths.get("./indexes/article_index") : Indexing.buildNewsIndex();
+						else
+							artIndex = Indexing.buildNewsIndex();						
+							
+						if(!refreshP.isSelected())
+							user = Files.exists(Paths.get("./indexes/profiles/"+txtUser)) ? Indexing.readUserIndex(txtUser) : Indexing.buildUserIndex(txtUser);
+						else
+							user = Indexing.buildUserIndex(txtUser);
 						
 						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 						float uboost;
