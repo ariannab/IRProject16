@@ -134,6 +134,22 @@ public class GuiMain {
 		btnAddUser.setToolTipText("<html>\r\nIf you want to profile a different Twitter user,<br>\r\ntype his username and append it to the list\r\n</html>");
 		btnAddUser.setBounds(20, 73, 160, 32);
 		panel_1.add(btnAddUser);
+		btnAddUser.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				String newUser = txtAddUser.getText();
+				if(!newUser.equals("")) {
+					listUsers.add(newUser);
+					txtAddUser.setText("");
+				}else{
+					JOptionPane.showMessageDialog(frameMain,
+						    "Username can't be empty!",
+						    "Warning",
+						    JOptionPane.WARNING_MESSAGE);
+				}
+				
+			}
+		});
 		
 		JLabel lblNewLabel = new JLabel("Select user in the list below, then search:");
 		lblNewLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -163,14 +179,6 @@ public class GuiMain {
 		refreshP.setToolTipText("If checked, user profile will be rebuilt");
 		refreshP.setBounds(269, 169, 104, 18);
 		frameMain.getContentPane().add(refreshP);
-		btnAddUser.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				listUsers.add(txtAddUser.getText());
-				txtAddUser.setText("");
-				
-			}
-		});
 		
 		
 		
