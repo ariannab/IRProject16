@@ -134,7 +134,7 @@ public class Querying {
 			String termString = t.utf8ToString();
 			
 			//normalization of frequencies (values in 0-1)
-			freq = termIt.totalTermFreq()/maxUserFreq;
+			freq = termIt.totalTermFreq()/maxFFreq;
 						
 			Query qTerm = new TermQuery(new Term("atags", termString));
 			BoostQuery boostQ = new BoostQuery(qTerm, freq);				
