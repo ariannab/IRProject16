@@ -86,7 +86,7 @@ public class GuiUtils {
 				for(RankingArticle article : user.getRankingArticle() ){
 					try
 					{
-					    String title = article.getTitle().replaceAll("&#039;", "'").replaceAll("’?", "'");
+					    String title = new String(article.getTitle().getBytes("Windows-1252"),"UTF-8");
 					    doc.insertString(doc.getLength(), String.format("%-4s%-150s%-24s%-10s%n%n",i+".", title, article.getSource(), article.getScore()), null);
 					    i++;
 					}
