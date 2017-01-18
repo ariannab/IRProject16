@@ -19,10 +19,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import java.awt.Font;
-import javax.swing.JOptionPane;
-import org.apache.lucene.analysis.custom.CustomAnalyzer;
+import java.awt.Image;
 
-import analysis.CustomAnalyzerFactory;
+import javax.swing.JOptionPane;
 import analysis.Indexing;
 import analysis.Querying;
 
@@ -32,8 +31,10 @@ import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JComboBox;
+import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
+import javax.swing.ImageIcon;
 
 public class GuiMain {
 
@@ -42,7 +43,7 @@ public class GuiMain {
 	java.awt.List listUsers;
 	JTextField txtAddUser;
 	JButton btnAddUser;
-	private JButton btnSearchNews;
+	static JButton btnSearchNews;
 	private JPanel panel_1;
 	private JCheckBox refreshN;
 	private JCheckBox refreshP;
@@ -94,8 +95,15 @@ public class GuiMain {
 		frameMain.getContentPane().setLayout(null);
 		
 		btnSearchNews = new JButton("Search News");
+		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+		try {
+			Image img = ImageIO.read(classloader.getResource("search.png"));
+			btnSearchNews.setIcon(new ImageIcon(img));
+		} catch (IOException e3) {
+			e3.printStackTrace();
+		}
 		btnSearchNews.setFont(new Font("SansSerif", Font.BOLD, 14));
-		btnSearchNews.setBounds(156, 339, 201, 42);
+		btnSearchNews.setBounds(180, 339, 151, 42);
 		frameMain.getContentPane().add(btnSearchNews);
 		
 		JPanel panel = new JPanel();
@@ -149,7 +157,7 @@ public class GuiMain {
 		refreshN.setBounds(269, 146, 118, 18);
 		frameMain.getContentPane().add(refreshN);
 		
-		refreshP = new JCheckBox("Reresh Profile");
+		refreshP = new JCheckBox("Refresh Profile");
 		refreshP.setBounds(269, 169, 104, 18);
 		frameMain.getContentPane().add(refreshP);
 		btnAddUser.addActionListener(new ActionListener() {
@@ -160,9 +168,22 @@ public class GuiMain {
 				
 			}
 		});
+		
+		
+		
 		btnSearchNews.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+				    Image img = ImageIO.read(classloader.getResource("refresh.png"));
+				    btnSearchNews.setIcon(new ImageIcon(img));
+				} catch (Exception ex) {
+				    System.out.println(ex);
+				}
+				btnSearchNews.setText("Searching...");
+				
 				System.out.println("Selected: "+listUsers.getSelectedIndex());
 				if(listUsers.getSelectedIndex()== -1){
 					JOptionPane.showMessageDialog(frameMain,
@@ -190,22 +211,18 @@ public class GuiMain {
 						if(!refreshP.isSelected())
 							user = Files.exists(Paths.get("./indexes/profiles/"+txtUser)) ? Indexing.readUserIndex(txtUser) : Indexing.buildUserIndex(txtUser);
 						else
-							user = Indexing.buildUserIndex(txtUser);
+							user = Indexing.buildUserIndex(txtUser);						
 						
-						CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
-						float uboost;
 						try {				
 							boolean alwaysTop = boostSelect.getSelectedIndex()==0;
 							if(!alwaysTop){
-								uboost= Float.valueOf((String) boostSelect.getSelectedItem());
-								
+								float uboost= Float.valueOf((String) boostSelect.getSelectedItem());								
 								Querying.setUboost(uboost);
 							}								
 							user.setRankingArticle(Querying.makeQuery(user.getUser_index_path(), artIndex, alwaysTop));
 						} catch (Exception e1) {
 							e1.printStackTrace();
 						}
-						analyzer.close();
 						GuiUtils.printUserDetails(user);
 					} catch (IOException e2) {
 						e2.printStackTrace();

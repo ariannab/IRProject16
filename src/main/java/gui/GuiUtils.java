@@ -178,6 +178,17 @@ public class GuiUtils {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		try {
+			ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+		    Image img = ImageIO.read(classloader.getResource("search.png"));
+		    GuiMain.btnSearchNews.setIcon(new ImageIcon(img));
+		} catch (Exception ex) {
+		    System.out.println(ex);
+		}
+		GuiMain.btnSearchNews.setText("Search News");
+		
+		
+		
 		frame = new JFrame();
 		frame.setBounds(500, 500, 1368, 768);
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
