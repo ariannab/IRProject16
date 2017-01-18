@@ -131,6 +131,7 @@ public class GuiMain {
 		txtAddUser.setColumns(10);
 		
 		btnAddUser = new JButton("Append");
+		btnAddUser.setToolTipText("<html>\r\nIf you want to profile a different Twitter user,<br>\r\ntype his username and append it to the list\r\n</html>");
 		btnAddUser.setBounds(20, 73, 160, 32);
 		panel_1.add(btnAddUser);
 		
@@ -154,10 +155,12 @@ public class GuiMain {
 		boostSelect.setSelectedIndex(0);
 		
 		refreshN = new JCheckBox("Refresh News");
+		refreshN.setToolTipText("If checked, news index will be rebuilt");
 		refreshN.setBounds(269, 146, 118, 18);
 		frameMain.getContentPane().add(refreshN);
 		
 		refreshP = new JCheckBox("Refresh Profile");
+		refreshP.setToolTipText("If checked, user profile will be rebuilt");
 		refreshP.setBounds(269, 169, 104, 18);
 		frameMain.getContentPane().add(refreshP);
 		btnAddUser.addActionListener(new ActionListener() {
@@ -173,17 +176,7 @@ public class GuiMain {
 		
 		btnSearchNews.addActionListener(new ActionListener() {
 			
-			public void actionPerformed(ActionEvent e) {
-				
-				try {
-					ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-				    Image img = ImageIO.read(classloader.getResource("refresh.png"));
-				    btnSearchNews.setIcon(new ImageIcon(img));
-				} catch (Exception ex) {
-				    System.out.println(ex);
-				}
-				btnSearchNews.setText("Searching...");
-				
+			public void actionPerformed(ActionEvent e) {				
 				System.out.println("Selected: "+listUsers.getSelectedIndex());
 				if(listUsers.getSelectedIndex()== -1){
 					JOptionPane.showMessageDialog(frameMain,
@@ -191,7 +184,16 @@ public class GuiMain {
 						    "Warning",
 						    JOptionPane.WARNING_MESSAGE);
 				}
-				else{
+				else{					
+					try {
+						ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+					    Image img = ImageIO.read(classloader.getResource("refresh.png"));
+					    btnSearchNews.setIcon(new ImageIcon(img));
+					} catch (Exception ex) {
+					    System.out.println(ex);
+					}
+					btnSearchNews.setText("Searching...");
+					
 					JOptionPane.showMessageDialog(frameMain,
 						    "Retrieving data: may take a few seconds",
 						    "Warning",

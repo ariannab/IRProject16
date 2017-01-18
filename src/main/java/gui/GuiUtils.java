@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.io.File;
@@ -210,6 +211,7 @@ public class GuiUtils {
 		panel.setLayout(gbl_panel);
 		
 		timeline = new JButton("");
+		timeline.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		timeline.setToolTipText("Click to open Twitter profile");
 		timeline.setOpaque(false);
 		timeline.setContentAreaFilled(false);
@@ -249,12 +251,13 @@ public class GuiUtils {
 		gbc_txtUsername.gridy = 0;
 		panel.add(txtUsername, gbc_txtUsername);
 		
-		JButton button = new JButton("");
-		button.setIcon(new ImageIcon(GuiUtils.class.getResource("/com/sun/javafx/scene/control/skin/caspian/dialog-confirm.png")));
-		button.setOpaque(false);
-		button.setContentAreaFilled(false);
-		button.setBorderPainted(false);
-		button.addActionListener(new ActionListener() {
+		JButton question = new JButton("");
+		question.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		question.setIcon(new ImageIcon(GuiUtils.class.getResource("/com/sun/javafx/scene/control/skin/caspian/dialog-confirm.png")));
+		question.setOpaque(false);
+		question.setContentAreaFilled(false);
+		question.setBorderPainted(false);
+		question.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					Desktop.getDesktop().open(new File("./explanations"));
@@ -263,14 +266,14 @@ public class GuiUtils {
 				}
 			}
 		});
-		button.setToolTipText("Click to open scores' explanations folder");
-		button.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 14));
+		question.setToolTipText("Click to open scores' explanations folder");
+		question.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 14));
 		GridBagConstraints gbc_button = new GridBagConstraints();
 		gbc_button.fill = GridBagConstraints.VERTICAL;
 		gbc_button.insets = new Insets(0, 0, 5, 0);
 		gbc_button.gridx = 4;
 		gbc_button.gridy = 0;
-		panel.add(button, gbc_button);
+		panel.add(question, gbc_button);
 		
 		scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
