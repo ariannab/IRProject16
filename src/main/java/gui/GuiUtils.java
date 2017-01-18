@@ -6,6 +6,8 @@ import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -80,7 +82,7 @@ public class GuiUtils {
 				SimpleAttributeSet bold = new SimpleAttributeSet();
 				StyleConstants.setBold(bold, true);
 				try {
-					doc.insertString(doc.getLength(), String.format("%-4s%-150s%-24s%-10s%n%n","", "Title", "Source", "Score"), bold);
+					doc.insertString(doc.getLength(), String.format("%-4s%-98s%-22s%-4s%n%n","", "Title", "Source", "Score"), bold);
 				} catch (BadLocationException e2) {
 					e2.printStackTrace();
 				}
@@ -88,7 +90,15 @@ public class GuiUtils {
 					try
 					{
 					    String title = new String(article.getTitle().getBytes("Windows-1252"),"UTF-8");
-					    doc.insertString(doc.getLength(), String.format("%-4s%-150s%-24s%-10s%n%n",i+".", title, article.getSource(), article.getScore()), null);
+					    String source = new String(article.getSource());
+					    BigDecimal roundedScore = new BigDecimal(article.getScore());
+					    roundedScore = roundedScore.setScale(2, RoundingMode.HALF_UP);
+					    if(title.length() > 94)
+					        title = title.substring(0,94) + "...";
+					    if(source.length() > 20)
+					    	source = source.substring(0,20);
+					    
+					    doc.insertString(doc.getLength(), String.format("%-4s%-98s%-22s%-4s%n%n",i+".", title, source, roundedScore), null);
 					    i++;
 					}
 					catch(Exception e) { System.out.println(e); }
@@ -191,20 +201,20 @@ public class GuiUtils {
 		
 		
 		frame = new JFrame();
-		frame.setBounds(500, 500, 1368, 768);
+		frame.setBounds(500, 500, 1215, 768);
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBackground(new Color(192, 192, 192));
-		tabbedPane.setBounds(0, 26, 1352, 697);
+		tabbedPane.setBounds(0, 29, 1199, 694);
 		frame.getContentPane().add(tabbedPane);
 		
 		panel = new JPanel();
 		panel.setBackground(new Color(245, 245, 245));
 		tabbedPane.addTab("Recommended News", null, panel, null);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] {54, 450, 562, 50, 0};
+		gbl_panel.columnWidths = new int[] {54, 450, 540, 60, 0};
 		gbl_panel.rowHeights = new int[] {100, 488, 0};
 		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gbl_panel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
@@ -271,7 +281,7 @@ public class GuiUtils {
 		GridBagConstraints gbc_button = new GridBagConstraints();
 		gbc_button.fill = GridBagConstraints.VERTICAL;
 		gbc_button.insets = new Insets(0, 0, 5, 0);
-		gbc_button.gridx = 4;
+		gbc_button.gridx = 3;
 		gbc_button.gridy = 0;
 		panel.add(question, gbc_button);
 		
@@ -279,13 +289,13 @@ public class GuiUtils {
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.gridheight = 2;
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane.gridwidth = 5;
+		gbc_scrollPane.gridwidth = 4;
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
 		panel.add(scrollPane, gbc_scrollPane);
 		
 		textPane = new JTextPane();
-		textPane.setFont(new Font("Monospaced", textPane.getFont().getStyle(), textPane.getFont().getSize()));
+		textPane.setFont(new Font("Monospaced", textPane.getFont().getStyle(), 15));
 		scrollPane.setViewportView(textPane);
 		
 		//------------User's && friends' terms
@@ -293,7 +303,7 @@ public class GuiUtils {
 		termsPanel.setBackground(new Color(245, 245, 245));
 		tabbedPane.addTab("Terms Ranking", null, termsPanel, null);
 		GridBagLayout gbl_termsPanel = new GridBagLayout();
-		gbl_termsPanel.columnWidths = new int[]{672, 672, 0};
+		gbl_termsPanel.columnWidths = new int[]{600, 600, 0};
 		gbl_termsPanel.rowHeights = new int[] {100, 304, 0};
 		gbl_termsPanel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
 		gbl_termsPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
