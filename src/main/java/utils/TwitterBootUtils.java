@@ -14,6 +14,13 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 public class TwitterBootUtils {
+	
+	/**
+	 * Read Twitter4j keys from file
+	 * 
+	 * @return the keys
+	 * @throws FileNotFoundException
+	 */
 	public static List<String> loadKeys() throws FileNotFoundException {
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		File file = new File(classloader.getResource("tweetKey.txt").getFile());
@@ -27,6 +34,12 @@ public class TwitterBootUtils {
 		return list;
 	}
 	
+	/**
+	 * Read usernames from file
+	 * 
+	 * @return the usernames
+	 * @throws FileNotFoundException
+	 */
 	public static List<String> loadUsernames() throws FileNotFoundException {
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		File file = new File(classloader.getResource("usernames.txt").getFile());
@@ -40,6 +53,15 @@ public class TwitterBootUtils {
 		return list;
 	}
 	
+	/**
+	 * Get timeline of a certain twitter user as plain String
+	 * 
+	 * @param twitter
+	 * @param userName
+	 * @param nTweets
+	 * @return the String representing the timeline
+	 * @throws TwitterException
+	 */
 	public static String getStringTimeline(Twitter twitter, String userName, int nTweets) throws TwitterException {
 		Paging page = new Paging (1, nTweets);
 		
@@ -56,7 +78,13 @@ public class TwitterBootUtils {
 		return "";
 	}
 	
-	
+	/**
+	 * Get list of "followers" IDs for a certain Twitter user
+	 * 
+	 * @param twitter
+	 * @param username
+	 * @return the followers list (IDs)
+	 */
 	public static List<Long> getFollowersList(Twitter twitter, String username) {
 		List<Long> followers = new ArrayList<Long>();
 		try {
@@ -72,6 +100,13 @@ public class TwitterBootUtils {
 		return followers;
 	}
 
+	/**
+	 * Get list of "following" IDs for a certain Twitter user
+	 * 
+	 * @param twitter
+	 * @param username
+	 * @return the following list (IDs)
+	 */
 	public static List<Long> getFollowingList(Twitter twitter, String username) {
 		List<Long> following = new ArrayList<Long>();
 		try {
@@ -119,6 +154,14 @@ public class TwitterBootUtils {
 	}
 	
 
+	/**
+	 * Get friends' timelines as Strings stored in list
+	 * 
+	 * @param twitter
+	 * @param friends
+	 * @return the list of Strings representing all the timelines
+	 * @throws TwitterException
+	 */
 	public static List<String> getFriendsTimeline(Twitter twitter, List<Long> friends) throws TwitterException {
 		//we retrieve the default number of tweets (20) for friends
 		int nTweets = 20;
