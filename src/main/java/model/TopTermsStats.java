@@ -3,16 +3,16 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserStats {
+public class TopTermsStats {
 	List<String> terms;
 	List<Integer> freq;
 	
-	public UserStats(List<String> terms, List<Integer> freq) {
+	public TopTermsStats(List<String> terms, List<Integer> freq) {
 		super();
 		this.terms = terms;
 		this.freq = freq;
 	}
-	public UserStats() {
+	public TopTermsStats() {
 		this.terms = new ArrayList<String>();
 		this.freq =  new ArrayList<Integer>();
 	}

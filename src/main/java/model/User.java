@@ -6,11 +6,11 @@ import java.util.List;
 
 public class User {
 	String name;
-	Path user_index_path;
+	Path userIndex;
 	int totFriends;
 	List<RankingArticle> rankingArticles;
-	UserStats ustats;
-	UserStats fstats;
+	TopTermsStats ustats;
+	TopTermsStats fstats;
 	
 	public User(String name) {
 		super();
@@ -30,23 +30,22 @@ public class User {
 	}
 		
 	public Path getUser_index_path() {
-		return user_index_path;
+		return userIndex;
 	}
 	public void setPath(Path user_index_path) {
-		this.user_index_path = user_index_path;
-	}
+		this.userIndex = user_index_path;
+	}	
 	
-	
-	public UserStats getUstats() {
+	public TopTermsStats getUstats() {
 		return ustats;
 	}
-	public void setUstats(UserStats ustats) {
+	public void setUstats(TopTermsStats ustats) {
 		this.ustats = ustats;
 	}
-	public UserStats getFstats() {
+	public TopTermsStats getFstats() {
 		return fstats;
 	}
-	public void setFstats(UserStats fstats) {
+	public void setFstats(TopTermsStats fstats) {
 		this.fstats = fstats;
 	}
 

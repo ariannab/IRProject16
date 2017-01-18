@@ -19,8 +19,4 @@ public class RespArticles {
 		return articles;
 	}
 	
-	
-	
-	
-	
 }

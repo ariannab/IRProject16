@@ -26,7 +26,7 @@ import org.apache.lucene.store.FSDirectory;
 
 import model.Article;
 import model.User;
-import model.UserStats;
+import model.TopTermsStats;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
@@ -166,11 +166,9 @@ public class Indexing {
 		
 		//retrieving and indexing one article
 		Set<String> enSourcesIDs = NewsBootUtils.getSourcesIDs();
-		int i = 0;
 		Set<Article> articles = null;
 		for(String id : enSourcesIDs){
-			i++;
-			articles = NewsBootUtils.getAllArticlesFromSource(id, i);
+			articles = NewsBootUtils.getAllArticlesFromSource(id);
 			if (articles != null) {
 				for (Article a : articles) {
 					Document article = articleDoc(a.getTitle(), a.getDescription(), id);
@@ -194,14 +192,14 @@ public class Indexing {
 	 * @return a UserStats object i.e. string of terms and their freq
 	 * @throws Exception
 	 */
-	public static UserStats getHighestTerms(Path userIndex, String field, int total) throws Exception{
+	public static TopTermsStats getHighestTerms(Path userIndex, String field, int total) throws Exception{
 		Directory userDir = FSDirectory.open(userIndex);
 
 		DirectoryReader uReader = DirectoryReader.open(userDir);
 		TermStats[] terms = HighFreqTerms.getHighFreqTerms(uReader, 
 				total, field, new HighFreqTerms.TotalTermFreqComparator());
 		
-		UserStats resultList = new UserStats();
+		TopTermsStats resultList = new TopTermsStats();
 		
 		 for (int i = 0; i < terms.length; i++) {
 			  resultList.getTerms().add(terms[i].termtext.utf8ToString());
@@ -252,6 +250,14 @@ public class Indexing {
 	}
 
 
+	/**
+	 * Read number of friends from user index 
+	 * 
+	 * @param userIndex
+	 * @return the number of friends
+	 * @throws NumberFormatException
+	 * @throws IOException
+	 */
 	private static int getNumOfFriends(Path userIndex) throws NumberFormatException, IOException {
 		Directory userDir = FSDirectory.open(userIndex);
 
