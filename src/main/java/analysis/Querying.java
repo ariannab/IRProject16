@@ -37,12 +37,14 @@ public class Querying {
 	
 	/**
 	 * Build and submit a boolean query to the news index. 
-	 * Clauses (OR) are user profile's tags 
+	 * Clauses (connected by OR operators) are user profile's terms 
 	 * (user plus friends ones, with different boosts)
 	 * 
 	 * @param userIndex
 	 * @param articlesIndex
-	 * @throws Exception 
+	 * @param alwaysTop
+	 * @return list of RankingArticle objects representing the query results
+	 * @throws Exception
 	 */
 
 	public static List<RankingArticle> makeQuery(Path userIndex, Path articlesIndex, boolean alwaysTop) throws Exception {
@@ -88,6 +90,16 @@ public class Querying {
 		
 	}
 
+	/**
+	 * Returns the query result list 
+	 * 
+	 * @param query
+	 * @param artSearcher
+	 * @param resultList
+	 * @return list of RankingArticle objects representing the query results
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
 	private static List<RankingArticle> getQueryResult(BooleanQuery query, IndexSearcher artSearcher, ScoreDoc[] resultList)
 			throws IOException, FileNotFoundException {
 		List<RankingArticle> result = new ArrayList<RankingArticle>();
@@ -118,9 +130,10 @@ public class Querying {
 	}
 
 	/**
-	 * Add friends tokens (clauses) to the boolean query, adjusting the boost
+	 * Add friends tokens (clauses) to the boolean query, adjusting the boost 
+	 * (in this case, the normalized frequency)
 	 * 
-	 * @param termIt
+	 * @param termV
 	 * @param qBuilder
 	 * @return the updated query builder
 	 * @throws IOException
@@ -147,9 +160,9 @@ public class Querying {
 	/**
 	 * Add user tokens (clauses) to the boolean query, adjusting the boost
 	 * 
-	 * @param termIt
+	 * @param termV
 	 * @param qBuilder
-	 * @param alwaysTop, to know if the boost is absolute or not
+	 * @param alwaysTop
 	 * @return the updated query builder
 	 * @throws IOException
 	 */
@@ -164,13 +177,10 @@ public class Querying {
 			
 			//normalization of frequencies (values in 0-1)
 			freq = termIt.totalTermFreq()/maxUserFreq;
-			
-			if(alwaysTop){
-				finalBoost = freq + 1;
-			}else{
-			//user's not always on top: his boost can be 2 or 3, his friends' always 1
-				finalBoost = uboost * freq;
-			}
+
+			//if user content is not "always absolutely on top",
+			//his boosting can be of 2 or 3
+			finalBoost = (alwaysTop) ? freq + 1 : uboost * freq; 
 			
 			Query qTerm = new TermQuery(new Term("atags", termString));
 			BoostQuery boostQ = new BoostQuery(qTerm, finalBoost);				
