@@ -295,6 +295,7 @@ public class GuiUtils {
 		panel.add(scrollPane, gbc_scrollPane);
 		
 		textPane = new JTextPane();
+		textPane.setEditable(false);
 		textPane.setFont(new Font("Monospaced", textPane.getFont().getStyle(), 15));
 		scrollPane.setViewportView(textPane);
 		
@@ -335,6 +336,7 @@ public class GuiUtils {
 		termsPanel.add(uScrollPane, gbc_uScrollPane);
 		
 		userTextArea = new JTextPane();
+		userTextArea.setEditable(false);
 		userTextArea.setFont(new Font("Monospaced", userTextArea.getFont().getStyle(), 16));
 		uScrollPane.setViewportView(userTextArea);
 		
@@ -346,6 +348,7 @@ public class GuiUtils {
 		termsPanel.add(fScrollPane, gbc_fScrollPane);
 		
 		fTextArea = new JTextPane();
+		fTextArea.setEditable(false);
 		fTextArea.setFont(new Font("Monospaced", fTextArea.getFont().getStyle(), 16));
 		fScrollPane.setViewportView(fTextArea);
 		
