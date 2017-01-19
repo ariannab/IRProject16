@@ -131,7 +131,6 @@ public class Indexing {
 		friends.retainAll(TwitterBootUtils.getFollowersList(twitter, userName));
 		
 		int totalFriends = friends.size();
-		System.out.println("\nUser is: "+userName+" and has "+totalFriends+" friends");
 		List<String> friendsTimeline = TwitterBootUtils.getFriendsTimeline(twitter, friends);
 
 		Document profile = userDoc(userName, timeline, friendsTimeline, totalFriends);

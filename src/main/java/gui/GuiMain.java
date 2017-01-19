@@ -63,7 +63,6 @@ public class GuiMain {
 					window.frameMain.setVisible(true);
 					window.users = new ArrayList<String>();
 					window.users = utils.TwitterBootUtils.loadUsernames();
-					System.out.println("Entered GUI");
 					for(String user : window.users){
 						window.listUsers.add(user);
 					}					
@@ -185,7 +184,6 @@ public class GuiMain {
 		btnSearchNews.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {				
-				System.out.println("Selected: "+listUsers.getSelectedIndex());
 				if(listUsers.getSelectedIndex()== -1){
 					JOptionPane.showMessageDialog(frameMain,
 						    "Select an user",
@@ -198,7 +196,6 @@ public class GuiMain {
 					    Image img = ImageIO.read(classloader.getResource("res/img/refresh.png"));
 					    btnSearchNews.setIcon(new ImageIcon(img));
 					} catch (Exception ex) {
-					    System.out.println(ex);
 					}
 					btnSearchNews.setText("Searching...");
 					

@@ -76,10 +76,7 @@ public class Querying {
 		
 		//submit query to the news index
 		TopDocs topdocs = artSearcher.search(query, 20);
-		ScoreDoc[] resultList = topdocs.scoreDocs; 
-
-//		final long endTime = System.currentTimeMillis();
-//		System.out.println("\nTotal execution time: " + (endTime - startTime) );		
+		ScoreDoc[] resultList = topdocs.scoreDocs; 	
 		
 		List<RankingArticle> result = getQueryResult(query, artSearcher, resultList);	
 
@@ -114,8 +111,6 @@ public class Querying {
 			if (art.getField("source") != null) 
 				asource = art.getField("source").stringValue();
 
-//			System.out.println("	title #"+(i+1)+": <" + atitle + "> source: <"+asource+"> *** Score: " + score);
-//			result.add("title: <" + atitle + "> source: <"+asource+"> *** Score: " + score + "\n");
 			result.add(new RankingArticle(atitle, asource, score));
 
 			new File("explanations/").mkdir();

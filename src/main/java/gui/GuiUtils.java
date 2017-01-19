@@ -71,11 +71,6 @@ public class GuiUtils {
 				GuiUtils window = new GuiUtils();
 				window.frame.setVisible(true);
 				window.frame.setLocationRelativeTo(null);
-				
-				//System.out.println("-------------------");
-				//System.out.println(user.getTimelineUser());
-				//TimelineUser.timelineuser(user);
-				//timelineFriends.timelineFriends(user);
 				window.txtUsername.setText(user.getName() + "'s suggested news:");
 				int i = 1;
 				StyledDocument doc = window.textPane.getStyledDocument();
@@ -101,7 +96,8 @@ public class GuiUtils {
 					    doc.insertString(doc.getLength(), String.format("%-4s%-98s%-22s%-4s%n%n",i+".", title, source, roundedScore), null);
 					    i++;
 					}
-					catch(Exception e) { System.out.println(e); }
+					catch(Exception e) { 
+					}
 					window.textPane.setSize(1100, 1000);
 					window.textPane.setCaretPosition(0);
 				}
@@ -181,7 +177,6 @@ public class GuiUtils {
 	 * Create the application.
 	 */
 	public GuiUtils() {
-		System.out.println("Enter initialization");
 		initialize();
 	}
 
@@ -194,7 +189,6 @@ public class GuiUtils {
 		    Image img = ImageIO.read(classloader.getResource("res/img/search.png"));
 		    GuiMain.btnSearchNews.setIcon(new ImageIcon(img));
 		} catch (Exception ex) {
-		    System.out.println(ex);
 		}
 		GuiMain.btnSearchNews.setText("Search News");
 		
@@ -231,7 +225,6 @@ public class GuiUtils {
 		    Image img = ImageIO.read(classloader.getResource("res/img/twitter.png"));
 			timeline.setIcon(new ImageIcon(img));
 		} catch (Exception ex) {
-		    System.out.println(ex);
 		}
 		GridBagConstraints gbc_timeline = new GridBagConstraints();
 		gbc_timeline.anchor = GridBagConstraints.EAST;

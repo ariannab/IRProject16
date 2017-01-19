@@ -122,38 +122,6 @@ public class TwitterBootUtils {
 		return following;
 	}
 	
-	public static void printFollowers(Twitter twitter, String userName) {
-		try {
-			IDs ids = twitter.getFollowersIDs(userName, -1);
-			do {
-				for (long id : ids.getIDs()) {
-					/*
-					 * String ID = "followers ID #" + id; String[] firstname =
-					 * ID.split("#"); String first_Name = firstname[0]; String
-					 * Id = firstname[1]; String Name =
-					 * twitter.showUser(id).getName();
-					 */
-					String screenname = twitter.showUser(id).getScreenName();
-					System.out.println(screenname);
-				}
-			} while (ids.hasNext());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-	public static void printTimeline(Twitter twitter, String userName) throws TwitterException {
-		// First param of Paging() is the page number, second is the number per
-		// page (this is capped around 200 I think)
-		Paging paging = new Paging(1, 100);
-		List<Status> statuses = twitter.getUserTimeline(userName, paging);
-		for (Status status : statuses) {
-			System.out.println(status.getUser().getName() + ":" + status.getText());
-		}
-	}
-	
-
 	/**
 	 * Get friends' timelines as Strings stored in list
 	 * 

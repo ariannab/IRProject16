@@ -39,7 +39,6 @@ public class NewsBootUtils {
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("GET");
 		int responseCode = con.getResponseCode();
-		System.out.println("GET Response Code :: " + responseCode);
 
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			StringBuffer response = obtainResponse(con);
@@ -51,9 +50,7 @@ public class NewsBootUtils {
 				sourceIDs.add(id);
 			}
 			return sourceIDs;
-		} else {
-			System.out.println("GET request not worked");
-		}
+		} 
 		return null;
 	}
 
@@ -160,9 +157,7 @@ public class NewsBootUtils {
 			Set<Article> articles = resp.getArticles();
 			
 			return articles;		
-		} else {
-			System.out.println("GET request not worked");
-		}
+		} 
 		return null;
 	}
 
