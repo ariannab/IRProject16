@@ -211,7 +211,7 @@ public class GuiMain {
 						Path artIndex = null;
 						User user = null;
 						if(!refreshN.isSelected())
-							artIndex = Files.exists(Paths.get("./indexes/article_index")) ? Paths.get("./indexes/article_index") : Indexing.buildNewsIndex();
+							artIndex = Files.exists(Paths.get("./indexes/news_index")) ? Paths.get("./indexes/news_index") : Indexing.buildNewsIndex();
 						else
 							artIndex = Indexing.buildNewsIndex();						
 							
@@ -236,7 +236,6 @@ public class GuiMain {
 					} catch (TwitterException e1) {
 						e1.printStackTrace();
 					} catch (Exception e2) {
-						// TODO Auto-generated catch block
 						e2.printStackTrace();
 					}					
 				}

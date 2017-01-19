@@ -153,7 +153,7 @@ public class Indexing {
 	 * @throws IOException
 	 */
 	public static Path buildNewsIndex() throws IOException {
-		Path artIndex = new File("./indexes/article_index").toPath();
+		Path artIndex = new File("./indexes/news_index").toPath();
 		Directory dir = FSDirectory.open(artIndex);
 		CustomAnalyzer analyzer = CustomAnalyzerFactory.buildTweetAnalyzer();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
