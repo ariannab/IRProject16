@@ -54,16 +54,16 @@ public class Querying {
 
 		// we stored the term vector during indexing phase,
 		// so we're able to retrieve it now
-		Terms uTermVector = uReader.getTermVector(0, "utags");
-		Terms fTermVector = uReader.getTermVector(0, "ftags");
+		Terms uTermVector = uReader.getTermVector(0, "usercontent");
+		Terms fTermVector = uReader.getTermVector(0, "frcontent");
 		
 		//start building the boolean query
 		int clauseCount = (int) (uTermVector.size()+fTermVector.size());		
 		BooleanQuery.setMaxClauseCount(clauseCount);
 		Builder qBuilder = new BooleanQuery.Builder();	
 		
-		maxUserFreq = Indexing.getHighestFreq(userIndex, "utags");
-		maxFFreq = Indexing.getHighestFreq(userIndex, "ftags");
+		maxUserFreq = Indexing.getHighestFreq(userIndex, "usercontent");
+		maxFFreq = Indexing.getHighestFreq(userIndex, "frcontent");
 				
 		qBuilder = addUserContentInQuery(uTermVector, qBuilder, alwaysTop);
 		qBuilder = addFriendsContentInQuery(fTermVector, qBuilder);
@@ -149,7 +149,7 @@ public class Querying {
 			//normalization of frequencies (values in 0-1)
 			freq = termIt.totalTermFreq()/maxFFreq;
 						
-			Query qTerm = new TermQuery(new Term("atags", termString));
+			Query qTerm = new TermQuery(new Term("artcontent", termString));
 			BoostQuery boostQ = new BoostQuery(qTerm, freq);				
 			qBuilder.add(boostQ, BooleanClause.Occur.SHOULD);			
 		}
@@ -182,7 +182,7 @@ public class Querying {
 			//his boosting can be of 2 or 3
 			finalBoost = (alwaysTop) ? freq + 1 : uboost * freq; 
 			
-			Query qTerm = new TermQuery(new Term("atags", termString));
+			Query qTerm = new TermQuery(new Term("artcontent", termString));
 			BoostQuery boostQ = new BoostQuery(qTerm, finalBoost);				
 			qBuilder.add(boostQ, BooleanClause.Occur.SHOULD);			
 		}

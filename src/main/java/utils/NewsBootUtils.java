@@ -122,7 +122,7 @@ public class NewsBootUtils {
 	 */
 	public static String loadAPIKey() throws FileNotFoundException {
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-		File file = new File(classloader.getResource("newsKey.txt").getFile());
+		File file = new File(classloader.getResource("res/txt/newsKey.txt").getFile());
 		Scanner s = new Scanner(file);
 		try {
 			return s.nextLine();

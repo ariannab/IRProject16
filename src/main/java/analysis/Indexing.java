@@ -61,11 +61,11 @@ public class Indexing {
 		FieldType myFieldType = new FieldType(TextField.TYPE_STORED);
 		//we need to store the term vectors if we want the term frequency in the user document
 		myFieldType.setStoreTermVectors(true);		
-		Field utags = new Field("utags", timeline, myFieldType);	
-		profile.add(utags);
+		Field usercontent = new Field("usercontent", timeline, myFieldType);	
+		profile.add(usercontent);
 				
-		Field ftags = new Field("ftags", friendsTimeline.toString(), myFieldType);
-		profile.add(ftags);
+		Field frcontent = new Field("frcontent", friendsTimeline.toString(), myFieldType);
+		profile.add(frcontent);
 		
 		return profile;
 
@@ -87,7 +87,7 @@ public class Indexing {
 		Document article = new Document();
 		article.add(titleField);
 		article.add(sourceField);
-		article.add(new TextField("atags", title+" "+description, Field.Store.YES));
+		article.add(new TextField("artcontent", title+" "+description, Field.Store.YES));
 		
 		return article;
 		
@@ -141,8 +141,8 @@ public class Indexing {
 
 		user.setPath(userIndex);	
 		user.setTotFriends(totalFriends);
-		user.setUstats(getHighestTerms(userIndex, "utags", 100));
-		user.setFstats(getHighestTerms(userIndex, "ftags", 100));
+		user.setUstats(getHighestTerms(userIndex, "usercontent", 100));
+		user.setFstats(getHighestTerms(userIndex, "frcontent", 100));
 		return user;
 		
 	}
@@ -188,7 +188,7 @@ public class Indexing {
 	 * of user's timeline or his friends'
 	 * 
 	 * @param userIndex
-	 * @param field (can be utags for users tags, ftags for friends tags)
+	 * @param field (can be usercontent for users tags, frcontent for friends tags)
 	 * @return a UserStats object i.e. string of terms and their freq
 	 * @throws Exception
 	 */
@@ -242,8 +242,8 @@ public class Indexing {
 		int totFriends = getNumOfFriends(userIndex);
 		user.setPath(userIndex);
 		user.setTotFriends(totFriends);
-		user.setUstats(getHighestTerms(userIndex, "utags", 100));
-		user.setFstats(getHighestTerms(userIndex, "ftags", 100));
+		user.setUstats(getHighestTerms(userIndex, "usercontent", 100));
+		user.setFstats(getHighestTerms(userIndex, "frcontent", 100));
 		
 
 		return user;

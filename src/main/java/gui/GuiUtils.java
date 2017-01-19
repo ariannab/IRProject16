@@ -191,7 +191,7 @@ public class GuiUtils {
 	private void initialize() {
 		try {
 			ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-		    Image img = ImageIO.read(classloader.getResource("search.png"));
+		    Image img = ImageIO.read(classloader.getResource("res/img/search.png"));
 		    GuiMain.btnSearchNews.setIcon(new ImageIcon(img));
 		} catch (Exception ex) {
 		    System.out.println(ex);
@@ -228,7 +228,7 @@ public class GuiUtils {
 		timeline.setBorderPainted(false);
 		try {
 			ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-		    Image img = ImageIO.read(classloader.getResource("twitter.png"));
+		    Image img = ImageIO.read(classloader.getResource("res/img/twitter.png"));
 			timeline.setIcon(new ImageIcon(img));
 		} catch (Exception ex) {
 		    System.out.println(ex);

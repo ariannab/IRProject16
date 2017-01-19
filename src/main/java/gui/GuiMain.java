@@ -97,7 +97,7 @@ public class GuiMain {
 		btnSearchNews = new JButton("Search News");
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		try {
-			Image img = ImageIO.read(classloader.getResource("search.png"));
+			Image img = ImageIO.read(classloader.getResource("res/img/search.png"));
 			btnSearchNews.setIcon(new ImageIcon(img));
 		} catch (IOException e3) {
 			e3.printStackTrace();
@@ -195,7 +195,7 @@ public class GuiMain {
 				else{					
 					try {
 						ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-					    Image img = ImageIO.read(classloader.getResource("refresh.png"));
+					    Image img = ImageIO.read(classloader.getResource("res/img/refresh.png"));
 					    btnSearchNews.setIcon(new ImageIcon(img));
 					} catch (Exception ex) {
 					    System.out.println(ex);

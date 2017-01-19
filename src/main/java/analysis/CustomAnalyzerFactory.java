@@ -21,7 +21,7 @@ public class CustomAnalyzerFactory {
 						urlRegex, "replacement", "")
 				.withTokenizer("lowercase")
 				.addTokenFilter("stop", "words",
-						"long_stopwords.txt", "format",
+						"res/txt/long_stopwords.txt", "format",
 						"wordset")
 				.addTokenFilter("porterstem")
 				.addTokenFilter("length", "min", "3", "max", "15")

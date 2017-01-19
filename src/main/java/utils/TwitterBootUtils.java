@@ -23,7 +23,7 @@ public class TwitterBootUtils {
 	 */
 	public static List<String> loadKeys() throws FileNotFoundException {
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-		File file = new File(classloader.getResource("tweetKey.txt").getFile());
+		File file = new File(classloader.getResource("res/txt/tweetKey.txt").getFile());
 
 		List<String> list = new ArrayList<String>();
 		Scanner s = new Scanner(file);
@@ -42,7 +42,7 @@ public class TwitterBootUtils {
 	 */
 	public static List<String> loadUsernames() throws FileNotFoundException {
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-		File file = new File(classloader.getResource("usernames.txt").getFile());
+		File file = new File(classloader.getResource("res/txt/usernames.txt").getFile());
 		
 		List<String> list = new ArrayList<String>();
 		Scanner s = new Scanner(file);
